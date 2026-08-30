@@ -90,26 +90,6 @@ export default function BentoShowcase() {
           <div style={{ marginBottom: "20px", fontSize: "14px", color: "var(--fg-muted)", lineHeight: "1.6" }}>
             Once launched, we integrate advanced technologies to match your scale: GIS coordinate geoprocessing maps, custom LLM agents, and high-frequency analytical dashboards.
           </div>
-          <div className="sandbox-cols">
-            <div className="sandbox-col">
-              <div className="sandbox-col-head">
-                <span className="mono-tag mono-tag--sm">FARIDABAD GIS ENGINE</span>
-                <span className="mono-line mono-line--sm">lat=28.4089 · lon=77.3178</span>
-              </div>
-              <pre className="code"><span className="c-var">shape</span> = load_sectors(<span className="c-str">"faridabad.shp"</span>)
-<span className="c-var">coords</span> = project_to_wgs84(shape)
-<span className="c-fn">render_overlay</span>(coords, zoom=<span className="c-num">14</span>)</pre>
-            </div>
-            <div className="sandbox-col">
-              <div className="sandbox-col-head">
-                <span className="mono-tag mono-tag--sm">STARTUP KPI ANALYTICS</span>
-                <span className="mono-line mono-line--sm">metrics.py</span>
-              </div>
-              <pre className="code"><span className="c-var">dau</span>, <span className="c-var">mau</span> = get_active_users()
-<span className="c-var">retention</span> = compute_cohort(<span className="c-num">30</span>)
-<span className="c-fn">publish_kpis</span>(dau, mau, retention)</pre>
-            </div>
-          </div>
         </div>
       </div>
     </section>

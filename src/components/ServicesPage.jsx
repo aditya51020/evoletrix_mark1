@@ -1,8 +1,32 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 export default function ServicesPage() {
   const [hoveredIdx, setHoveredIdx] = useState(null)
   const [clickedIdx, setClickedIdx] = useState(0) // Default to first service
+  const [isMobile, setIsMobile] = useState(false)
+  const [slideTrigger, setSlideTrigger] = useState(0)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 860)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  const selectService = (idx) => {
+    setClickedIdx(idx)
+    setSlideTrigger(prev => prev + 1)
+  }
+
+  const handlePrev = () => {
+    const nextIdx = clickedIdx === 0 ? 4 : clickedIdx - 1
+    selectService(nextIdx)
+  }
+
+  const handleNext = () => {
+    const nextIdx = clickedIdx === 4 ? 0 : clickedIdx + 1
+    selectService(nextIdx)
+  }
 
   const activeIdx = hoveredIdx !== null ? hoveredIdx : clickedIdx
 
@@ -170,69 +194,35 @@ export default function ServicesPage() {
             </p>
           </header>
 
-          {/* Split Master-Detail Layout */}
-          <div className="ind-split-layout" style={{ gridTemplateColumns: "0.9fr 1.1fr" }}>
-            
-            {/* Master List (Left side) */}
-            <div 
-              style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                gap: "14px", 
-                height: "calc(100vh - 160px)", 
-                minHeight: "540px" 
-              }}
-            >
-              {services.map((srv, idx) => {
-                const isActive = activeIdx === idx
-                return (
-                  <div
-                    key={idx}
-                    className={`ind-card ${isActive ? "is-active" : ""}`}
-                    style={{ 
-                      aspectRatio: "auto", 
-                      padding: "20px 24px", 
-                      flexDirection: "row", 
-                      justifyContent: "flex-start", 
-                      gap: "20px",
-                      flex: 1
-                    }}
-                    onMouseEnter={() => setHoveredIdx(idx)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    onClick={() => setClickedIdx(idx)}
-                  >
-                    <div className="ind-icon-wrapper" style={{ margin: "0", flexShrink: 0 }}>
-                      {getIcon(srv.key)}
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "left" }}>
-                      <span className="ind-title" style={{ fontSize: "15px", fontWeight: "600", color: isActive ? "var(--fg)" : "var(--fg-muted)" }}>
-                        {srv.title}
-                      </span>
-                    </div>
+          {/* Responsive Layout Switch */}
+          {isMobile ? (
+            /* Mobile Slideable View */
+            <div className="service-mobile-slider">
+              <div 
+                key={slideTrigger} 
+                className="service-slide-card slide-in"
+              >
+                {/* Header info */}
+                <div style={{ display: "flex", gap: "16px", alignItems: "center", marginBottom: "20px" }}>
+                  <div className="ind-icon-wrapper" style={{ margin: "0", flexShrink: 0 }}>
+                    {getIcon(services[clickedIdx].key)}
                   </div>
-                )
-              })}
-            </div>
-
-            {/* Details Panel (Right side) */}
-            <div className="ind-details-panel" style={{ height: "calc(100vh - 160px)", minHeight: "540px" }}>
-              <div className="ind-details-visual-header">
-                <span className="ind-details-visual-icon">
-                  {getIcon(services[activeIdx].key)}
-                </span>
-              </div>
-
-              <div className="ind-details-content">
-                <h3 style={{ marginTop: "6px", fontSize: "22px" }}>{services[activeIdx].title}</h3>
-                
-                <div className="ind-details-section">
-                  <p className="ind-details-desc">{services[activeIdx].desc}</p>
+                  <h3 style={{ fontSize: "18px", fontWeight: "700", color: "#18181b", margin: 0 }}>
+                    {services[clickedIdx].title}
+                  </h3>
                 </div>
-                
-                <div className="ind-details-section" style={{ marginTop: "20px" }}>
-                  <h4>WHAT WE OFFER</h4>
-                  <ul style={{ display: "grid", gap: "12px", marginTop: "12px" }}>
-                    {services[activeIdx].points.map((pt, pIdx) => (
+
+                <p style={{ color: "#44444a", fontSize: "14px", lineHeight: "1.6", marginBottom: "24px" }}>
+                  {services[clickedIdx].desc}
+                </p>
+
+                {/* Offerings list */}
+                <div style={{ marginBottom: "28px" }}>
+                  <h4 style={{ fontSize: "11px", fontFamily: "var(--font-mono)", textTransform: "uppercase", color: "var(--fg-dim)", letterSpacing: "0.08em", marginBottom: "12px" }}>
+                    WHAT WE OFFER
+                  </h4>
+                  <ul style={{ display: "grid", gap: "10px" }}>
+                    {services[clickedIdx].points.map((pt, pIdx) => (
                       <li key={pIdx} style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                         <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
                         <span style={{ color: "#27272a", fontSize: "13.5px" }}>{pt}</span>
@@ -240,17 +230,143 @@ export default function ServicesPage() {
                     ))}
                   </ul>
                 </div>
+
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                  className="btn btn-dark"
+                  style={{ width: "100%", padding: "14px", fontSize: "14px", fontWeight: "700" }}
+                >
+                  Discuss this service →
+                </button>
+              </div>
+
+              {/* Slider Controls */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "24px", paddingInline: "8px" }}>
+                {/* Prev Button */}
+                <button 
+                  onClick={handlePrev}
+                  className="btn btn-outline-dark"
+                  style={{ padding: "8px 16px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                  aria-label="Previous service"
+                >
+                  ←
+                </button>
+
+                {/* Dots indicator */}
+                <div style={{ display: "flex", gap: "8px" }}>
+                  {services.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => selectService(idx)}
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        border: "none",
+                        background: clickedIdx === idx ? "#18181b" : "#d4d4d8",
+                        cursor: "pointer",
+                        padding: 0,
+                        transition: "background 0.2s"
+                      }}
+                      aria-label={`Go to service ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button 
+                  onClick={handleNext}
+                  className="btn btn-outline-dark"
+                  style={{ padding: "8px 16px", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                  aria-label="Next service"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Desktop Master-Detail Layout */
+            <div className="ind-split-layout" style={{ gridTemplateColumns: "0.9fr 1.1fr" }}>
+              
+              {/* Master List (Left side) */}
+              <div 
+                style={{ 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: "14px", 
+                  height: "calc(100vh - 160px)", 
+                  minHeight: "540px" 
+                }}
+              >
+                {services.map((srv, idx) => {
+                  const isActive = activeIdx === idx
+                  return (
+                    <div
+                      key={idx}
+                      className={`ind-card ${isActive ? "is-active" : ""}`}
+                      style={{ 
+                        aspectRatio: "auto", 
+                        padding: "20px 24px", 
+                        flexDirection: "row", 
+                        justifyContent: "flex-start", 
+                        gap: "20px",
+                        flex: 1
+                      }}
+                      onMouseEnter={() => setHoveredIdx(idx)}
+                      onMouseLeave={() => setHoveredIdx(null)}
+                      onClick={() => setClickedIdx(idx)}
+                    >
+                      <div className="ind-icon-wrapper" style={{ margin: "0", flexShrink: 0 }}>
+                        {getIcon(srv.key)}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", textAlign: "left" }}>
+                        <span className="ind-title" style={{ fontSize: "15px", fontWeight: "600", color: isActive ? "var(--fg)" : "var(--fg-muted)" }}>
+                          {srv.title}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Details Panel (Right side) */}
+              <div className="ind-details-panel" style={{ height: "calc(100vh - 160px)", minHeight: "540px" }}>
+                <div className="ind-details-visual-header">
+                  <span className="ind-details-visual-icon">
+                    {getIcon(services[activeIdx].key)}
+                  </span>
+                </div>
+
+                <div className="ind-details-content">
+                  <h3 style={{ marginTop: "6px", fontSize: "22px" }}>{services[activeIdx].title}</h3>
+                  
+                  <div className="ind-details-section">
+                    <p className="ind-details-desc">{services[activeIdx].desc}</p>
+                  </div>
+                  
+                  <div className="ind-details-section" style={{ marginTop: "20px" }}>
+                    <h4>WHAT WE OFFER</h4>
+                    <ul style={{ display: "grid", gap: "12px", marginTop: "12px" }}>
+                      {services[activeIdx].points.map((pt, pIdx) => (
+                        <li key={pIdx} style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                          <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
+                          <span style={{ color: "#27272a", fontSize: "13.5px" }}>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                  className="btn btn-dark ind-details-btn"
+                >
+                  Discuss this service →
+                </button>
               </div>
               
-              <button 
-                onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
-                className="btn btn-dark ind-details-btn"
-              >
-                Discuss this service →
-              </button>
             </div>
-            
-          </div>
+          )}
         </div>
       </section>
 
