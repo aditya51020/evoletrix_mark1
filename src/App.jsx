@@ -15,6 +15,7 @@ import IndustriesPage from "./components/IndustriesPage"
 import ServicesPage from "./components/ServicesPage"
 import PortfolioPage from "./components/PortfolioPage"
 import AboutPage from "./components/AboutPage"
+import CareersPage from "./components/CareersPage"
 
 export default function App() {
   const [view, setView] = useState("home")
@@ -33,6 +34,9 @@ export default function App() {
         window.scrollTo({ top: 0, behavior: "instant" })
       } else if (hash === "#about-page") {
         setView("about")
+        window.scrollTo({ top: 0, behavior: "instant" })
+      } else if (hash === "#careers-page") {
+        setView("careers")
         window.scrollTo({ top: 0, behavior: "instant" })
       } else {
         setView("home")
@@ -60,6 +64,7 @@ export default function App() {
         {view === "services" && <ServicesPage />}
         {view === "portfolio" && <PortfolioPage />}
         {view === "about" && <AboutPage />}
+        {view === "careers" && <CareersPage />}
         {view === "home" && (
           <>
             <Hero />

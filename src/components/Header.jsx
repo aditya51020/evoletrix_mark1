@@ -31,6 +31,7 @@ export default function Header() {
           <a href="#industries-page">Industries</a>
           <a href="#portfolio-page">Portfolio</a>
           <a href="#about-page">About Us</a>
+          <a href="#careers-page">Careers</a>
         </nav>
 
         <div className="header-cta">
@@ -53,6 +54,7 @@ export default function Header() {
         <a href="#industries-page" onClick={() => setIsMenuOpen(false)}>Industries</a>
         <a href="#portfolio-page" onClick={() => setIsMenuOpen(false)}>Portfolio</a>
         <a href="#about-page" onClick={() => setIsMenuOpen(false)}>About Us</a>
+        <a href="#careers-page" onClick={() => setIsMenuOpen(false)}>Careers</a>
         <button className="btn btn-solid" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-booking")); }}>Get in touch</button>
       </div>
     </header>

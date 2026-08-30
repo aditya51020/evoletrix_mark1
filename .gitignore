@@ -18,3 +18,4 @@ build/
 .snowflake/
 .v0-trash/
 .vercel/
+.vercel
