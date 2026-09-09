@@ -13,14 +13,21 @@ export default function Hero() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let prefersReducedMotion = reducedMotionQuery.matches
+
     const highlightDuration = 1400
     const dotSpacing = 11
+    const frameInterval = 1000 / 30 // the animation only needs ~30fps; halves the CPU/GPU cost for no visible loss
     let width = 0
     let height = 0
-    let dpr = Math.min(window.devicePixelRatio || 1, 2)
+    let dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     let dots = []
     let raf = 0
     let hoveredDot = null
+    let lastFrameTime = 0
+    let isTabVisible = document.visibilityState === "visible"
+    let isHeroInView = true
 
     const highlightDotAt = (e) => {
       const rect = canvas.getBoundingClientRect()
@@ -160,32 +167,92 @@ export default function Hero() {
       ctx.globalAlpha = 1
     }
 
+    // Only keep animating while it's actually visible: on screen, tab
+    // focused, and motion isn't disabled. Otherwise the loop is stopped
+    // entirely instead of ticking (and burning CPU/battery) in the background.
+    const shouldAnimate = () => !prefersReducedMotion && isTabVisible && isHeroInView
+
     const draw = (now) => {
-      render(now)
+      if (!shouldAnimate()) {
+        raf = 0
+        return
+      }
+      if (now - lastFrameTime >= frameInterval) {
+        lastFrameTime = now
+        render(now)
+      }
       raf = requestAnimationFrame(draw)
     }
 
-    // ResizeObserver tracks sizing changes dynamically, preventing initial 0-dimension bugs
-    const resizeObserver = new ResizeObserver(() => {
-      const entryWidth = heroSection.clientWidth
-      const entryHeight = heroSection.clientHeight
-      if (entryWidth > 0 && entryHeight > 0) {
-        width = entryWidth
-        height = entryHeight
-        canvas.width = width * dpr
-        canvas.height = height * dpr
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-        buildDots()
-        render(performance.now())
+    const startLoop = () => {
+      if (raf || !shouldAnimate()) return
+      raf = requestAnimationFrame(draw)
+    }
+
+    const stopLoop = () => {
+      if (raf) {
+        cancelAnimationFrame(raf)
+        raf = 0
       }
+    }
+
+    const handleVisibilityChange = () => {
+      isTabVisible = document.visibilityState === "visible"
+      if (isTabVisible) startLoop()
+      else stopLoop()
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+
+    const heroVisibilityObserver = new IntersectionObserver(([entry]) => {
+      isHeroInView = entry.isIntersecting
+      if (isHeroInView) startLoop()
+      else stopLoop()
+    })
+    heroVisibilityObserver.observe(heroSection)
+
+    const handleReducedMotionChange = (e) => {
+      prefersReducedMotion = e.matches
+      if (prefersReducedMotion) {
+        stopLoop()
+        render(performance.now())
+      } else {
+        startLoop()
+      }
+    }
+    reducedMotionQuery.addEventListener("change", handleReducedMotionChange)
+
+    // ResizeObserver tracks sizing changes dynamically, preventing initial 0-dimension bugs.
+    // Rebuilding the dot grid is the most expensive step, so it's debounced —
+    // mobile browsers fire several resize events in a row (e.g. the URL bar
+    // showing/hiding) and rebuilding on every one of them causes visible jank.
+    let resizeDebounce = 0
+    const resizeObserver = new ResizeObserver(() => {
+      clearTimeout(resizeDebounce)
+      resizeDebounce = setTimeout(() => {
+        const entryWidth = heroSection.clientWidth
+        const entryHeight = heroSection.clientHeight
+        if (entryWidth > 0 && entryHeight > 0) {
+          width = entryWidth
+          height = entryHeight
+          canvas.width = width * dpr
+          canvas.height = height * dpr
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+          buildDots()
+          render(performance.now())
+        }
+      }, 120)
     })
     resizeObserver.observe(heroSection)
 
-    raf = requestAnimationFrame(draw)
+    startLoop()
 
     // Cleanup on component unmount
     return () => {
-      cancelAnimationFrame(raf)
+      clearTimeout(resizeDebounce)
+      stopLoop()
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+      reducedMotionQuery.removeEventListener("change", handleReducedMotionChange)
+      heroVisibilityObserver.disconnect()
       heroSection.removeEventListener("pointermove", highlightDotAt)
       heroSection.removeEventListener("pointerleave", handlePointerLeave)
       resizeObserver.disconnect()
