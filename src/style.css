@@ -1557,6 +1557,10 @@ ul { list-style: none; padding: 0; }
   .feature-visual { border-right: none; border-bottom: 1px solid var(--line-soft); height: 220px; }
   .feature-copy { height: auto; max-height: 320px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+  /* .stats-grid-about sets its column count via an inline style (it's reused
+     with 2/3/4 columns across Careers/Services/About), so the override needs
+     !important to actually win at this breakpoint instead of being ignored. */
+  .stats-grid-about { grid-template-columns: repeat(2, 1fr) !important; }
   .outcomes-grid { grid-template-columns: 1fr; }
   .outcome-card--wide { grid-column: auto; grid-auto-flow: row; grid-template-columns: 1fr; align-items: start; gap: 14px; }
   .security-layout { grid-template-columns: 1fr; }
@@ -1572,6 +1576,7 @@ ul { list-style: none; padding: 0; }
   .sandbox-cols { grid-template-columns: 1fr; }
   .agent-cards { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr; }
+  .stats-grid-about { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
   .footer-brand { grid-column: 1 / -1; }
   .hero-actions .btn { flex: 1; }

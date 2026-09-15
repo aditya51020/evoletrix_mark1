@@ -58,14 +58,15 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHash)
   }, [])
 
-  // Reveals ".reveal" elements as they scroll into view. Runs again whenever
-  // the active view changes so newly-mounted page content gets observed too.
+  // Reveals ".reveal" elements as they scroll into view. Route pages are
+  // React.lazy + Suspense, so their content can mount asynchronously *after*
+  // a "view changed" effect would have already run and found nothing to
+  // observe -- a plain `[view]`-keyed effect misses that content permanently.
+  // A MutationObserver sidesteps the timing question entirely: it re-scans
+  // for new ".reveal" elements whenever the DOM actually changes, whether
+  // that's a lazy page finishing its load, a view switch, or an accordion
+  // injecting new content.
   useEffect(() => {
-    const revealEls = Array.from(document.querySelectorAll(".reveal")).filter(
-      (el) => !el.classList.contains("is-visible")
-    )
-    if (!revealEls.length) return
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -78,9 +79,20 @@ export default function App() {
       { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
     )
 
-    revealEls.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [view])
+    const observeNewReveals = () => {
+      document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => observer.observe(el))
+    }
+
+    observeNewReveals()
+
+    const mutationObserver = new MutationObserver(observeNewReveals)
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+    }
+  }, [])
 
   return (
     <>
