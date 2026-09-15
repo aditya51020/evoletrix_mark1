@@ -13,9 +13,6 @@ export default function Hero() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
-    let prefersReducedMotion = reducedMotionQuery.matches
-
     const highlightDuration = 1400
     const dotSpacing = 11
     const frameInterval = 1000 / 30 // the animation only needs ~30fps; halves the CPU/GPU cost for no visible loss
@@ -167,10 +164,13 @@ export default function Hero() {
       ctx.globalAlpha = 1
     }
 
-    // Only keep animating while it's actually visible: on screen, tab
-    // focused, and motion isn't disabled. Otherwise the loop is stopped
-    // entirely instead of ticking (and burning CPU/battery) in the background.
-    const shouldAnimate = () => !prefersReducedMotion && isTabVisible && isHeroInView
+    // Only keep animating while it's actually visible: on screen and the tab
+    // is focused. Otherwise the loop is stopped entirely instead of ticking
+    // (and burning CPU/battery) in the background. This is a slow, subtle
+    // ambient background effect (not fast/flashing motion), so it isn't
+    // gated behind prefers-reduced-motion the way a parallax or autoplaying
+    // video would be.
+    const shouldAnimate = () => isTabVisible && isHeroInView
 
     const draw = (now) => {
       if (!shouldAnimate()) {
@@ -210,17 +210,6 @@ export default function Hero() {
     })
     heroVisibilityObserver.observe(heroSection)
 
-    const handleReducedMotionChange = (e) => {
-      prefersReducedMotion = e.matches
-      if (prefersReducedMotion) {
-        stopLoop()
-        render(performance.now())
-      } else {
-        startLoop()
-      }
-    }
-    reducedMotionQuery.addEventListener("change", handleReducedMotionChange)
-
     // ResizeObserver tracks sizing changes dynamically, preventing initial 0-dimension bugs.
     // Rebuilding the dot grid is the most expensive step, so it's debounced —
     // mobile browsers fire several resize events in a row (e.g. the URL bar
@@ -251,7 +240,6 @@ export default function Hero() {
       clearTimeout(resizeDebounce)
       stopLoop()
       document.removeEventListener("visibilitychange", handleVisibilityChange)
-      reducedMotionQuery.removeEventListener("change", handleReducedMotionChange)
       heroVisibilityObserver.disconnect()
       heroSection.removeEventListener("pointermove", highlightDotAt)
       heroSection.removeEventListener("pointerleave", handlePointerLeave)
