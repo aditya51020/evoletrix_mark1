@@ -19,3 +19,6 @@ build/
 .v0-trash/
 .vercel/
 .vercel
+
+# Local booking store (self-hosted server.js) -- runtime data, not source
+/data/

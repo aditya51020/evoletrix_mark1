@@ -1703,6 +1703,18 @@ ul { list-style: none; padding: 0; }
   font-weight: 600;
 }
 
+.booking-slot-btn:disabled,
+.booking-slot-btn.unavailable {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.booking-slot-btn:disabled:hover,
+.booking-slot-btn.unavailable:hover {
+  border-color: var(--line-soft);
+  color: var(--fg-muted);
+}
+
 .booking-slots-placeholder {
   font-size: 13px;
   color: var(--fg-dim);

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react"
+import { BUSINESS_TIMEZONE, getNowInTimeZone, toDateKey, getSlotLabel } from "../lib/bookingConfig"
 
 export default function BookingModal() {
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1) // 1: Date/Time selection, 2: Form, 3: Success
   const [viewDate, setViewDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(null)
-  const [selectedTime, setSelectedTime] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(null) // canonical 24h "HH:mm"
+  const [slots, setSlots] = useState([])
+  const [slotsLoading, setSlotsLoading] = useState(false)
+  const [slotsError, setSlotsError] = useState("")
 
   // Form states
   const [name, setName] = useState("")
@@ -30,6 +34,35 @@ export default function BookingModal() {
     return () => window.removeEventListener("open-booking", handleOpen)
   }, [])
 
+  // Fetches this date's slots from the server -- the only source of truth for
+  // what's actually bookable (past/notice-window and already-booked slots are
+  // filtered out there, not guessed at client-side).
+  const fetchSlots = async (dateObj) => {
+    if (!dateObj) return
+    setSlotsLoading(true)
+    setSlotsError("")
+    try {
+      const dateKey = toDateKey(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate())
+      const res = await fetch(`/api/availability?date=${dateKey}`)
+      if (!res.ok) throw new Error("availability request failed")
+      const data = await res.json()
+      setSlots(Array.isArray(data.slots) ? data.slots : [])
+    } catch (err) {
+      setSlots([])
+      setSlotsError("Couldn't load available times. Please try again.")
+    } finally {
+      setSlotsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setSlots([])
+      return
+    }
+    fetchSlots(selectedDate)
+  }, [selectedDate])
+
   if (!isOpen) return null
 
   const year = viewDate.getFullYear()
@@ -49,17 +82,17 @@ export default function BookingModal() {
     daysGrid.push(d)
   }
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  // "Today" is computed fresh on every render from the business timezone
+  // (not the visitor's local clock), so the calendar's cutoff always matches
+  // what the server uses to accept or reject a booking.
+  const nowInfo = getNowInTimeZone(BUSINESS_TIMEZONE)
 
   const isDayAvailable = (day) => {
     if (!day) return false
-    const dateObj = new Date(year, month, day)
-    dateObj.setHours(0, 0, 0, 0)
+    const dateKey = toDateKey(year, month, day)
+    if (dateKey < nowInfo.dateKey) return false
 
-    if (dateObj < today) return false
-
-    const dayOfWeek = dateObj.getDay()
+    const dayOfWeek = new Date(year, month, day).getDay()
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6 // Saturday or Sunday
     return !isWeekend
   }
@@ -70,17 +103,6 @@ export default function BookingModal() {
     setSelectedDate(dateObj)
     setSelectedTime(null)
   }
-
-  const timeSlots = [
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "02:00 PM",
-    "02:30 PM",
-    "03:00 PM",
-    "03:30 PM"
-  ]
 
   const nextMonth = () => {
     setViewDate(new Date(year, month + 1, 1))
@@ -103,13 +125,14 @@ export default function BookingModal() {
     setError("")
 
     try {
+      const dateKey = toDateKey(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
       const res = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           email,
-          date: selectedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+          date: dateKey,
           time: selectedTime,
           message
         })
@@ -118,8 +141,18 @@ export default function BookingModal() {
       if (res.ok) {
         setStep(3)
       } else {
-        const errData = await res.json()
+        const errData = await res.json().catch(() => ({}))
         setError(errData.error || "Something went wrong. Please try again.")
+
+        // The slot was taken (or slid inside the notice window) between
+        // selection and submission. The user stays on this screen and sees
+        // the message above; the stale selection is cleared and the slot
+        // list is refreshed in the background so "Back to Calendar" shows
+        // accurate availability instead of the now-invalid time.
+        if (res.status === 409) {
+          setSelectedTime(null)
+          fetchSlots(selectedDate)
+        }
       }
     } catch (err) {
       setError("Failed to connect to the server.")
@@ -150,9 +183,7 @@ export default function BookingModal() {
           </div>
 
           <h3 className="booking-meet-title">Product Consultation</h3>
-          <div className="booking-duration">
-            <span style={{ fontSize: "14px", marginRight: "4px" }}>◷</span> 30 Min Meeting
-          </div>
+          <div className="booking-duration">30 Min Meeting</div>
           <p className="booking-desc">
             Let's discuss your product roadmap, software architecture requirements, and how Evoletrix can design and engineer your solution to scale.
           </p>
@@ -217,17 +248,28 @@ export default function BookingModal() {
                         {selectedDate.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' })}
                       </span>
                       <div className="booking-slots-list">
-                        {timeSlots.map((time, idx) => (
+                        {slotsLoading && (
+                          <div className="booking-slots-placeholder">Loading available times...</div>
+                        )}
+                        {!slotsLoading && slotsError && (
+                          <div className="booking-slots-placeholder">{slotsError}</div>
+                        )}
+                        {!slotsLoading && !slotsError && slots.length === 0 && (
+                          <div className="booking-slots-placeholder">No time slots available for this date.</div>
+                        )}
+                        {!slotsLoading && !slotsError && slots.map((slot) => (
                           <button
-                            key={idx}
-                            onClick={() => setSelectedTime(time)}
-                            className={`booking-slot-btn ${selectedTime === time ? "selected" : ""}`}
+                            key={slot.time}
+                            type="button"
+                            disabled={!slot.available}
+                            onClick={() => setSelectedTime(slot.time)}
+                            className={`booking-slot-btn ${selectedTime === slot.time ? "selected" : ""} ${!slot.available ? "unavailable" : ""}`}
                           >
-                            {time}
+                            {slot.label}
                           </button>
                         ))}
                       </div>
-                      
+
                       {selectedTime && (
                         <button 
                           className="btn btn-solid btn-sm" 
@@ -252,7 +294,7 @@ export default function BookingModal() {
             <div className="booking-step2">
               <h4 className="booking-flow-title">Enter Details</h4>
               <p className="booking-flow-meta">
-                📅 {selectedDate.toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })} at {selectedTime}
+                {selectedDate.toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })} at {getSlotLabel(selectedTime)}
               </p>
 
               <form onSubmit={handleConfirm} className="booking-form">
@@ -303,16 +345,20 @@ export default function BookingModal() {
 
           {step === 3 && (
             <div className="booking-step3">
-              <div className="success-icon" aria-hidden="true">✓</div>
+              <div className="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <h4 className="booking-flow-title">Meeting Confirmed!</h4>
               <p className="booking-success-desc">
                 Your consultation session with Evoletrix has been scheduled.
               </p>
-              
+
               <div className="booking-summary-card">
                 <h5>Product Consultation</h5>
                 <p className="summary-row"><strong>Date:</strong> {selectedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <p className="summary-row"><strong>Time:</strong> {selectedTime}</p>
+                <p className="summary-row"><strong>Time:</strong> {getSlotLabel(selectedTime)}</p>
                 <p className="summary-row"><strong>Type:</strong> 30 Min Video Call</p>
               </div>
 

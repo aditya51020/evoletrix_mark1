@@ -3,6 +3,7 @@ import cors from "cors"
 import path from "path"
 import { fileURLToPath } from "url"
 import fs from "fs"
+import { getAvailability, createBooking } from "./api/bookingStore.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -22,19 +23,51 @@ app.post("/api/contact", (req, res) => {
   return res.status(200).json({ message: "Thank you! We will get in touch soon for a coffee chat." })
 })
 
-// Booking Calendar Endpoint
-app.post("/api/booking", (req, res) => {
+// Returns which of the configured meeting slots are still bookable for a
+// given date -- past slots, slots inside the minimum-notice window, and
+// already-booked slots are all excluded server-side.
+app.get("/api/availability", (req, res) => {
+  const { date } = req.query
+  const result = getAvailability(date)
+  if (result.error) {
+    return res.status(400).json({ error: "A valid date (YYYY-MM-DD) is required." })
+  }
+  return res.status(200).json({ date, slots: result.slots })
+})
+
+// Booking Calendar Endpoint. Availability is re-checked here regardless of
+// what the client showed, so a stale or tampered-with client request can
+// never create a double-booking or a booking inside the notice window.
+app.post("/api/booking", async (req, res) => {
   const { name, email, date, time, message } = req.body
   if (!name || !email || !date || !time) {
     return res.status(400).json({ error: "Name, email, date, and time are required" })
   }
-  console.log(`[BOOKING CONTEXT] Received calendar booking request:`)
-  console.log(`  Name: ${name}`)
-  console.log(`  Email: ${email}`)
-  console.log(`  Date: ${date}`)
-  console.log(`  Time: ${time}`)
-  console.log(`  Message: ${message || "N/A"}`)
-  return res.status(200).json({ message: "Booking confirmed successfully!" })
+
+  try {
+    const result = await createBooking({ name, email, date, time, message })
+
+    if (result.error === "SLOT_TAKEN") {
+      return res.status(409).json({ error: "This slot is no longer available. Please choose another time." })
+    }
+    if (result.error === "SLOT_EXPIRED") {
+      return res.status(409).json({ error: "This time slot is no longer available for booking. Please choose a later slot." })
+    }
+    if (result.error === "INVALID_DATE" || result.error === "INVALID_SLOT") {
+      return res.status(400).json({ error: "The selected date or time is not valid." })
+    }
+
+    console.log(`[BOOKING CONTEXT] Received calendar booking request:`)
+    console.log(`  Name: ${result.booking.name}`)
+    console.log(`  Email: ${result.booking.email}`)
+    console.log(`  Date: ${result.booking.date}`)
+    console.log(`  Time: ${result.booking.time}`)
+    console.log(`  Message: ${result.booking.message || "N/A"}`)
+    return res.status(201).json({ message: "Booking confirmed successfully!", booking: result.booking })
+  } catch (err) {
+    console.error("Booking failed:", err)
+    return res.status(500).json({ error: "Something went wrong. Please try again." })
+  }
 })
 
 // Serve built static assets from Vite dist/ folder
