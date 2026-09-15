@@ -6,7 +6,6 @@ export default function SDKSection() {
       <div className="shell">
         <span className="pill-tag reveal">◼ COLLABORATION</span>
         <h2 id="sdkTitle" className="pixel-title reveal">ENGAGEMENT MODELS</h2>
-        <button onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))} className="btn btn-outline-dark reveal">Find Your Model</button>
 
         <div className="sdk-cards reveal">
           <article className="sdk-card">

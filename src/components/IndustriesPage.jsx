@@ -1,10 +1,61 @@
 import React, { useState } from "react"
+import TestimonialCard from "./TestimonialCard"
+
+// Same avatar-gradient palette used by the About-page client testimonials,
+// cycled per card so each of the six keeps a distinct but on-brand accent.
+const testimonialAvatarGrads = [
+  "linear-gradient(135deg, #7c3aed, #2f6bff)",
+  "linear-gradient(135deg, #22d3ee, #86efac)",
+  "linear-gradient(135deg, var(--brand), var(--brand-cyan))",
+  "linear-gradient(135deg, var(--brand-cyan), var(--brand))",
+]
 
 export default function IndustriesPage() {
   const [hoveredIdx, setHoveredIdx] = useState(null)
   const [clickedIdx, setClickedIdx] = useState(0) // Default to first industry (Healthcare)
 
   const activeIdx = hoveredIdx !== null ? hoveredIdx : clickedIdx
+
+  // Existing testimonial content, unchanged -- only how each card is
+  // rendered changes (now via the shared TestimonialCard component).
+  const industryTestimonials = [
+    {
+      name: "Dr. Sarah Jenkins",
+      role: "CTO",
+      company: "HealthSync",
+      text: "Evoletrix engineered our HIPAA-compliant portal with absolute precision. Their team integrated directly into our Slack and felt like a true extension of our squad.",
+    },
+    {
+      name: "David Vance",
+      role: "VP of Engineering",
+      company: "Trust Pay",
+      text: "The FinTech ledger Evoletrix built handles our massive daily volume flawlessly. Outstanding code quality, security compliance, and turnaround speed.",
+    },
+    {
+      name: "Liam O'Connor",
+      role: "Director of Logistics",
+      company: "LogiRun",
+      text: "Their custom routing algorithm cut our courier delivery match times in half. The level of transparency we received during development was world-class.",
+    },
+    {
+      name: "Marcus Aurelius",
+      role: "Founder",
+      company: "POSSync",
+      text: "Their retail inventory sync engine handles our 50k SKUs in real-time. Extremely robust build quality and stellar execution.",
+    },
+    {
+      name: "Aisha Rahman",
+      role: "Head of Infrastructure",
+      company: "SolarGrid",
+      text: "Evoletrix built our solar energy telemetry pipeline under a tight timeline. Speed, precision, and absolute technical competence.",
+    },
+    {
+      name: "Carlos Mendez",
+      role: "CTO",
+      company: "BuildTech",
+      text: "The offline-first blueprint sync tool is a game-changer for our field operations. Absolute game-changers in developer tooling.",
+    },
+  ]
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -190,73 +241,20 @@ export default function IndustriesPage() {
             <h2 className="display" style={{ color: "var(--light-fg)" }}>Industry leaders have something to say about us</h2>
           </header>
 
-          {/* Testimonial Cards Grid (6 total cards in 2 rows of 3) */}
+          {/* Testimonial Cards Grid (6 total cards in 2 rows of 3) -- same
+              content as before, now rendered with the shared TestimonialCard
+              component (reused from the About page's client testimonials). */}
           <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px 32px", background: "none", boxShadow: "none" }}>
-            {/* Card 1 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Evoletrix engineered our HIPAA-compliant portal with absolute precision. Their team integrated directly into our Slack and felt like a true extension of our squad."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Dr. Sarah Jenkins</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>CTO at HealthSync</span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "The FinTech ledger Evoletrix built handles our massive daily volume flawlessly. Outstanding code quality, security compliance, and turnaround speed."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>David Vance</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>VP of Engineering at Trust Pay</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Their custom routing algorithm cut our courier delivery match times in half. The level of transparency we received during development was world-class."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Liam O'Connor</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Director of Logistics at LogiRun</span>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Their retail inventory sync engine handles our 50k SKUs in real-time. Extremely robust build quality and stellar execution."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Marcus Aurelius</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Founder at POSSync</span>
-              </div>
-            </div>
-
-            {/* Card 5 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Evoletrix built our solar energy telemetry pipeline under a tight timeline. Speed, precision, and absolute technical competence."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Aisha Rahman</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Head of Infrastructure at SolarGrid</span>
-              </div>
-            </div>
-
-            {/* Card 6 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "The offline-first blueprint sync tool is a game-changer for our field operations. Absolute game-changers in developer tooling."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Carlos Mendez</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>CTO at BuildTech</span>
-              </div>
-            </div>
+            {industryTestimonials.map((testimonial, idx) => (
+              <TestimonialCard
+                key={testimonial.name}
+                name={testimonial.name}
+                role={testimonial.role}
+                company={testimonial.company}
+                text={testimonial.text}
+                avatarGrad={testimonialAvatarGrads[idx % testimonialAvatarGrads.length]}
+              />
+            ))}
           </div>
         </div>
       </section>

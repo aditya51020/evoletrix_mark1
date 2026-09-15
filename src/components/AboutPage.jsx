@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import FAQSection from "./FAQSection"
+import TestimonialCard from "./TestimonialCard"
 
 function StatItem({ count, suffix, decimals = 0, label, description }) {
   const [current, setCurrent] = useState(0)
@@ -264,70 +265,21 @@ export default function AboutPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: "32px" }} className="app-test-container">
               
               {/* Left Column Content */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                
-                {/* Aligned Header Row with equal heights */}
-                <div style={{ display: "flex", gap: "16px", alignItems: "stretch", width: "100%" }}>
-                  
-                  {/* Profile Gradient visual instead of photo icon */}
-                  <div 
-                    style={{ 
-                      width: "80px", 
-                      background: testimonials[activeTestimonial].avatarGrad, 
-                      borderRadius: "var(--radius-sm)", 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center", 
-                      overflow: "hidden" 
-                    }}
-                  >
-                    <span style={{ color: "#ffffff", fontWeight: "700", fontSize: "20px", fontFamily: "var(--font-mono)" }}>
-                      {testimonials[activeTestimonial].name.split(" ").map(n => n[0]).join("")}
-                    </span>
-                  </div>
-                  
-                  {/* Name and title box */}
-                  <div style={{ background: "var(--light-panel)", border: "1px solid var(--light-line)", borderRadius: "var(--radius-sm)", padding: "14px 20px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                    <h4 style={{ margin: 0, fontSize: "16px", color: "var(--light-fg)", fontWeight: "700" }}>{testimonials[activeTestimonial].name}</h4>
-                    <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)", marginTop: "4px" }}>
-                      {testimonials[activeTestimonial].role}, {testimonials[activeTestimonial].company}
-                    </span>
-                  </div>
-
-                  {/* Company Logo box */}
-                  <div style={{ background: "var(--light-panel)", border: "1px solid var(--light-line)", borderRadius: "var(--radius-sm)", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "center", minWidth: "140px" }}>
-                    <span style={{ fontSize: "13px", fontWeight: "700", fontFamily: "var(--font-mono)", color: "#18181b", letterSpacing: "0.08em" }}>
-                      {testimonials[activeTestimonial].company.split(" ")[0].toUpperCase()}
-                    </span>
-                  </div>
+              <TestimonialCard
+                size="lg"
+                name={testimonials[activeTestimonial].name}
+                role={testimonials[activeTestimonial].role}
+                company={testimonials[activeTestimonial].company}
+                text={testimonials[activeTestimonial].text}
+                avatarGrad={testimonials[activeTestimonial].avatarGrad}
+                logoLabel={testimonials[activeTestimonial].company.split(" ")[0].toUpperCase()}
+              >
+                {/* Slider controls bottom right */}
+                <div className="testimonial-quote-footer">
+                  <button onClick={prevTestimonial} aria-label="Previous testimonial">←</button>
+                  <button onClick={nextTestimonial} aria-label="Next testimonial">→</button>
                 </div>
-
-                {/* Big testimonial description text card */}
-                <div style={{ background: "var(--light-panel)", border: "1px solid var(--light-line)", borderRadius: "var(--radius-sm)", padding: "36px", position: "relative" }}>
-                  <span style={{ fontSize: "60px", color: "var(--brand)", position: "absolute", top: "10px", left: "20px", fontFamily: "Georgia, serif", lineHeight: 1, opacity: 0.15 }}>“</span>
-                  <p style={{ fontSize: "15px", lineHeight: "1.75", color: "#27272a", position: "relative", zIndex: 2, paddingLeft: "12px" }}>
-                    {testimonials[activeTestimonial].text}
-                  </p>
-                  
-                  {/* Slider controls bottom right */}
-                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "24px" }}>
-                    <button 
-                      onClick={prevTestimonial}
-                      style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--light-line)", background: "transparent", display: "grid", placeItems: "center", cursor: "pointer", color: "#18181b" }}
-                      aria-label="Previous testimonial"
-                    >
-                      ←
-                    </button>
-                    <button 
-                      onClick={nextTestimonial}
-                      style={{ width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--light-line)", background: "transparent", display: "grid", placeItems: "center", cursor: "pointer", color: "#18181b" }}
-                      aria-label="Next testimonial"
-                    >
-                      →
-                    </button>
-                  </div>
-                </div>
-              </div>
+              </TestimonialCard>
 
               {/* Right Column Abstract Gradient Visual */}
               <div 

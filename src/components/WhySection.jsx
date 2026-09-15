@@ -115,7 +115,7 @@ export default function WhySection() {
             {/* Panel 5: Data Services */}
             <article className={`feature-panel ${activeTab === 4 ? "is-active" : ""}`}>
               <div className="feature-visual" data-grad="4">
-                <div className="visual-terminal">
+                <div className="visual-terminal visual-terminal--data">
                   <span className="vt-head">DATA ANALYTICS <em>big_data · py 3.11</em></span>
                   <pre className="code code--sm"><span className="c-var">data</span> = load_dataset(<span className="c-str">'logs.csv'</span>)
 <span className="c-var">metrics</span> = calculate_analytics(data)

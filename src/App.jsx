@@ -8,7 +8,6 @@ import StatsSection from "./components/StatsSection"
 import OutcomesSection from "./components/OutcomesSection"
 import SecuritySection from "./components/SecuritySection"
 import FAQSection from "./components/FAQSection"
-import CTASection from "./components/CTASection"
 import Footer from "./components/Footer"
 import BookingModal from "./components/BookingModal"
 
@@ -105,7 +104,6 @@ export default function App() {
             <OutcomesSection />
             <SecuritySection />
             <FAQSection />
-            <CTASection />
             <div className="bg-transition-spacer-bottom" aria-hidden="true"></div>
           </>
         )}
