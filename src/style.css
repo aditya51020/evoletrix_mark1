@@ -1555,6 +1555,11 @@ ul { list-style: none; padding: 0; }
      capping only the copy so long lists still scroll instead of overflowing. */
   .feature-panel { grid-template-columns: 1fr; height: auto; }
   .feature-visual { border-right: none; border-bottom: 1px solid var(--line-soft); height: 220px; }
+  /* The testimonial carousel (About page + Industries) sets its two-column
+     split inline with no min-width guard, so the gradient visual column
+     gets squeezed to near-nothing at narrow widths -- stack it instead. */
+  .app-test-container { grid-template-columns: 1fr !important; }
+  .app-test-container .testimonial-card-header { flex-wrap: wrap; }
   .feature-copy { height: auto; max-height: 320px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   /* .stats-grid-about sets its column count via an inline style (it's reused

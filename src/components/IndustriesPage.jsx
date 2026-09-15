@@ -13,6 +13,7 @@ const testimonialAvatarGrads = [
 export default function IndustriesPage() {
   const [hoveredIdx, setHoveredIdx] = useState(null)
   const [clickedIdx, setClickedIdx] = useState(0) // Default to first industry (Healthcare)
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
 
   const activeIdx = hoveredIdx !== null ? hoveredIdx : clickedIdx
 
@@ -56,6 +57,14 @@ export default function IndustriesPage() {
       text: "The offline-first blueprint sync tool is a game-changer for our field operations. Absolute game-changers in developer tooling.",
     },
   ]
+
+  const nextTestimonial = () => {
+    setActiveTestimonial((prev) => (prev === industryTestimonials.length - 1 ? 0 : prev + 1))
+  }
+
+  const prevTestimonial = () => {
+    setActiveTestimonial((prev) => (prev === 0 ? industryTestimonials.length - 1 : prev - 1))
+  }
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -241,20 +250,43 @@ export default function IndustriesPage() {
             <h2 className="display" style={{ color: "var(--light-fg)" }}>Industry leaders have something to say about us</h2>
           </header>
 
-          {/* Testimonial Cards Grid (6 total cards in 2 rows of 3) -- same
-              content as before, now rendered with the shared TestimonialCard
-              component (reused from the About page's client testimonials). */}
-          <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px 32px", background: "none", boxShadow: "none" }}>
-            {industryTestimonials.map((testimonial, idx) => (
-              <TestimonialCard
-                key={testimonial.name}
-                name={testimonial.name}
-                role={testimonial.role}
-                company={testimonial.company}
-                text={testimonial.text}
-                avatarGrad={testimonialAvatarGrads[idx % testimonialAvatarGrads.length]}
-              />
-            ))}
+          {/* Same slide-by-slide carousel used by the About page's client
+              testimonials -- one testimonial at a time with prev/next
+              controls and a gradient visual panel, reused structure and
+              design, adapted to Industries' own six quotes (unchanged). */}
+          <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: "32px" }} className="app-test-container">
+            <TestimonialCard
+              size="lg"
+              name={industryTestimonials[activeTestimonial].name}
+              role={industryTestimonials[activeTestimonial].role}
+              company={industryTestimonials[activeTestimonial].company}
+              text={industryTestimonials[activeTestimonial].text}
+              avatarGrad={testimonialAvatarGrads[activeTestimonial % testimonialAvatarGrads.length]}
+              logoLabel={industryTestimonials[activeTestimonial].company.toUpperCase()}
+            >
+              <div className="testimonial-quote-footer">
+                <button onClick={prevTestimonial} aria-label="Previous testimonial">←</button>
+                <button onClick={nextTestimonial} aria-label="Next testimonial">→</button>
+              </div>
+            </TestimonialCard>
+
+            <div
+              data-grad={(activeTestimonial % 8) + 1}
+              style={{
+                borderRadius: "var(--radius)",
+                height: "100%",
+                minHeight: "260px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 10px 24px rgba(0,0,0,0.05)",
+                position: "relative",
+                overflow: "hidden",
+                transition: "background 0.5s ease"
+              }}
+            >
+              <div style={{ position: "absolute", inset: 0, opacity: 0.08, backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "16px 16px" }}></div>
+            </div>
           </div>
         </div>
       </section>
