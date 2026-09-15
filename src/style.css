@@ -865,9 +865,7 @@ ul { list-style: none; padding: 0; }
 .feature-panel {
   display: none;
   grid-template-columns: 1.1fr 1fr;
-  /* Fixed (not min-) height: the visual side must never grow/shrink just
-     because a tab's copy is longer or shorter than another's. */
-  height: 420px;
+  min-height: 380px;
 }
 .feature-panel.is-active { display: grid; animation: fade 0.4s var(--ease); }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -878,18 +876,8 @@ ul { list-style: none; padding: 0; }
   place-items: center;
   padding: 30px;
   border-right: 1px solid var(--line-soft);
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
 }
-.feature-copy {
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  overflow-y: auto;
-}
+.feature-copy { padding: 40px; display: flex; flex-direction: column; }
 .ft-index {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -1549,18 +1537,13 @@ ul { list-style: none; padding: 0; }
   .feature-layout { grid-template-columns: 1fr; }
   .feature-tabs { position: static; grid-auto-flow: column; overflow-x: auto; }
   .feature-tab { white-space: nowrap; }
-  /* Stacked layout: visual and copy are separate rows, so the shared fixed
-     height from desktop would either clip content or force the whole card
-     to double the space needed -- let each block size to its own content,
-     capping only the copy so long lists still scroll instead of overflowing. */
-  .feature-panel { grid-template-columns: 1fr; height: auto; }
-  .feature-visual { border-right: none; border-bottom: 1px solid var(--line-soft); height: 220px; }
+  .feature-panel { grid-template-columns: 1fr; }
+  .feature-visual { border-right: none; border-bottom: 1px solid var(--line-soft); min-height: 220px; }
   /* The testimonial carousel (About page + Industries) sets its two-column
      split inline with no min-width guard, so the gradient visual column
      gets squeezed to near-nothing at narrow widths -- stack it instead. */
   .app-test-container { grid-template-columns: 1fr !important; }
   .app-test-container .testimonial-card-header { flex-wrap: wrap; }
-  .feature-copy { height: auto; max-height: 320px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   /* .stats-grid-about sets its column count via an inline style (it's reused
      with 2/3/4 columns across Careers/Services/About), so the override needs
@@ -2184,6 +2167,13 @@ ul { list-style: none; padding: 0; }
   display: flex;
   flex-direction: column;
   flex: 1;
+  /* The card and its 120px image header are fixed-size; when a service's
+     "what we offer" list is longer than the remaining space, this area
+     scrolls internally instead of being clipped by the panel's own
+     overflow:hidden (min-height:0 is required for a flex:1 child to
+     actually shrink to its allotted space instead of growing to fit content). */
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .ind-details-content h3 {
