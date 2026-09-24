@@ -8,14 +8,16 @@ import StatsSection from "./components/StatsSection"
 import OutcomesSection from "./components/OutcomesSection"
 import SecuritySection from "./components/SecuritySection"
 import FAQSection from "./components/FAQSection"
-import CTASection from "./components/CTASection"
 import Footer from "./components/Footer"
 import BookingModal from "./components/BookingModal"
-import IndustriesPage from "./components/IndustriesPage"
-import ServicesPage from "./components/ServicesPage"
-import PortfolioPage from "./components/PortfolioPage"
-import AboutPage from "./components/AboutPage"
-import CareersPage from "./components/CareersPage"
+
+// Route-level pages are loaded on demand instead of bundled into the initial
+// load, since only one of them (at most) is ever shown at a time.
+const IndustriesPage = lazy(() => import("./components/IndustriesPage"))
+const ServicesPage = lazy(() => import("./components/ServicesPage"))
+const PortfolioPage = lazy(() => import("./components/PortfolioPage"))
+const AboutPage = lazy(() => import("./components/AboutPage"))
+const CareersPage = lazy(() => import("./components/CareersPage"))
 
 // Lazy-loaded so the admin dashboard (and its CSS/JS) never lands in the
 // public site's initial bundle — it's only fetched when someone actually
@@ -63,6 +65,45 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHash)
   }, [])
 
+  // Reveals ".reveal" elements as they scroll into view. Route pages are
+  // React.lazy + Suspense, so their content can mount asynchronously *after*
+  // a "view changed" effect would have already run and found nothing to
+  // observe -- a plain `[view]`-keyed effect misses that content permanently.
+  // A MutationObserver sidesteps the timing question entirely: it re-scans
+  // for new ".reveal" elements whenever the DOM actually changes, whether
+  // that's a lazy page finishing its load, a view switch, or an accordion
+  // injecting new content.
+  //
+  // Called unconditionally (before the admin early-return below) so hook
+  // order stays identical across renders regardless of `view`.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible")
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+    )
+
+    const observeNewReveals = () => {
+      document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => observer.observe(el))
+    }
+
+    observeNewReveals()
+
+    const mutationObserver = new MutationObserver(observeNewReveals)
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+    }
+  }, [])
+
   if (view === "admin") {
     return (
       <Suspense fallback={<div style={{ padding: 40, color: "#9b9ba3", fontFamily: "monospace" }}>Loading…</div>}>
@@ -75,11 +116,13 @@ export default function App() {
     <>
       <Header />
       <main id="top">
-        {view === "industries" && <IndustriesPage />}
-        {view === "services" && <ServicesPage />}
-        {view === "portfolio" && <PortfolioPage />}
-        {view === "about" && <AboutPage />}
-        {view === "careers" && <CareersPage />}
+        <Suspense fallback={null}>
+          {view === "industries" && <IndustriesPage />}
+          {view === "services" && <ServicesPage />}
+          {view === "portfolio" && <PortfolioPage />}
+          {view === "about" && <AboutPage />}
+          {view === "careers" && <CareersPage />}
+        </Suspense>
         {view === "home" && (
           <>
             <Hero />
@@ -91,7 +134,6 @@ export default function App() {
             <OutcomesSection />
             <SecuritySection />
             <FAQSection />
-            <CTASection />
             <div className="bg-transition-spacer-bottom" aria-hidden="true"></div>
           </>
         )}

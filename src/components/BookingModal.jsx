@@ -200,9 +200,7 @@ export default function BookingModal() {
           </div>
 
           <h3 className="booking-meet-title">Product Consultation</h3>
-          <div className="booking-duration">
-            <span style={{ fontSize: "14px", marginRight: "4px" }}>◷</span> 30 Min Meeting
-          </div>
+          <div className="booking-duration">30 Min Meeting</div>
           <p className="booking-desc">
             Let's discuss your product roadmap, software architecture requirements, and how Evoletrix can design and engineer your solution to scale.
           </p>
@@ -282,7 +280,7 @@ export default function BookingModal() {
                           )
                         })}
                       </div>
-                      
+
                       {selectedTime && (
                         <button 
                           className="btn btn-solid btn-sm" 
@@ -307,7 +305,7 @@ export default function BookingModal() {
             <div className="booking-step2">
               <h4 className="booking-flow-title">Enter Details</h4>
               <p className="booking-flow-meta">
-                📅 {selectedDate.toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })} at {selectedTime}
+                {selectedDate.toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' })} at {selectedTime}
               </p>
 
               <form onSubmit={handleConfirm} className="booking-form">
@@ -370,12 +368,16 @@ export default function BookingModal() {
 
           {step === 3 && (
             <div className="booking-step3">
-              <div className="success-icon" aria-hidden="true">✓</div>
+              <div className="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <h4 className="booking-flow-title">Request Received!</h4>
               <p className="booking-success-desc">
                 We'll confirm your slot by email within 24 hours.
               </p>
-              
+
               <div className="booking-summary-card">
                 <h5>Product Consultation</h5>
                 <p className="summary-row"><strong>Date:</strong> {selectedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

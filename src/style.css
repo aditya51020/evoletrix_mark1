@@ -51,6 +51,17 @@
 
 * { margin: 0; }
 
+/* Scrollbars are hidden everywhere (page and any internally-scrolling
+   element) while scrolling itself stays fully functional -- this is
+   purely cosmetic, not `overflow: hidden`. */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Chromium-based Edge */
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--header-h);
@@ -320,7 +331,7 @@ ul { list-style: none; padding: 0; }
    GRADIENT TRANSITION SPACER (Section 2 to 3)
    ============================================================ */
 .bg-transition-spacer {
-  height: 480px;
+  height: 220px;
   background: linear-gradient(
     to bottom,
     #0a0a0b 0%,
@@ -342,7 +353,7 @@ ul { list-style: none; padding: 0; }
    GRADIENT TRANSITION SPACER BOTTOM (Section 10 to Footer)
    ============================================================ */
 .bg-transition-spacer-bottom {
-  height: 480px;
+  height: 220px;
   background: linear-gradient(
     to bottom,
     var(--light-bg) 0%,
@@ -930,6 +941,18 @@ ul { list-style: none; padding: 0; }
 }
 .visual-terminal em { font-style: normal; color: #34d399; }
 
+/* Data Services panel: the code sample previously forced this visual wider
+   than the other panels' visuals (its long unwrapped lines overflowed the
+   card). Slightly smaller and wrapping keeps it the same size as the rest. */
+.visual-terminal--data {
+  width: 74%;
+}
+.visual-terminal--data .code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+
 /* ============================================================
    LIGHT BLOCK (workflow + final CTA)
    ============================================================ */
@@ -1237,13 +1260,6 @@ ul { list-style: none; padding: 0; }
 .faq-list { max-width: 860px; }
 
 /* ============================================================
-   FINAL CTA
-   ============================================================ */
-.final-cta { text-align: center; }
-.final-cta-inner { display: grid; justify-items: center; gap: 8px; }
-.final-cta .display { margin-bottom: 20px; }
-
-/* ============================================================
    FOOTER
    ============================================================ */
 .site-footer { background: var(--bg); padding-block: 64px 40px; }
@@ -1327,7 +1343,15 @@ ul { list-style: none; padding: 0; }
   .feature-tab { white-space: nowrap; }
   .feature-panel { grid-template-columns: 1fr; }
   .feature-visual { border-right: none; border-bottom: 1px solid var(--line-soft); min-height: 220px; }
+  /* The testimonial carousel (About page + Industries) sets its two-column
+     split inline with no min-width guard, so the gradient visual column
+     gets squeezed to near-nothing at narrow widths -- stack it instead. */
+  .app-test-container { grid-template-columns: 1fr !important; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+  /* .stats-grid-about sets its column count via an inline style (it's reused
+     with 2/3/4 columns across Careers/Services/About), so the override needs
+     !important to actually win at this breakpoint instead of being ignored. */
+  .stats-grid-about { grid-template-columns: repeat(2, 1fr) !important; }
   .outcomes-grid { grid-template-columns: 1fr; }
   .outcome-card--wide { grid-column: auto; grid-auto-flow: row; grid-template-columns: 1fr; align-items: start; gap: 14px; }
   .security-layout { grid-template-columns: 1fr; }
@@ -1343,6 +1367,7 @@ ul { list-style: none; padding: 0; }
   .sandbox-cols { grid-template-columns: 1fr; }
   .agent-cards { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr; }
+  .stats-grid-about { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
   .footer-brand { grid-column: 1 / -1; }
   .hero-actions .btn { flex: 1; }
@@ -1963,6 +1988,14 @@ ul { list-style: none; padding: 0; }
   display: flex;
   flex-direction: column;
   flex: 1;
+  /* The card and its 120px image header are fixed-size; when a service's
+     "what we offer" list is longer than the remaining space, this area
+     scrolls internally instead of being clipped by the panel's own
+     overflow:hidden (min-height:0 is required for a flex:1 child to
+     actually shrink to its allotted space instead of growing to fit content). */
+  min-height: 0;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .ind-details-content h3 {
