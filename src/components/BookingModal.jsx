@@ -11,6 +11,7 @@ export default function BookingModal() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
+  const [hpFieldX, setHpFieldX] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -23,6 +24,7 @@ export default function BookingModal() {
       setName("")
       setEmail("")
       setMessage("")
+      setHpFieldX("")
       setError("")
       setViewDate(new Date())
     }
@@ -49,19 +51,39 @@ export default function BookingModal() {
     daysGrid.push(d)
   }
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  // "Now" as seen in Asia/Kolkata, regardless of the visitor's local
+  // timezone — this must match booking.php's server-side validation,
+  // which also anchors everything to Asia/Kolkata. A visitor browsing
+  // from a different timezone would otherwise see a different "today"
+  // (and different past/future slots) than what the backend enforces.
+  const istNow = (() => {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(new Date())
+
+    const map = {}
+    for (const p of parts) map[p.type] = p.value
+
+    return {
+      year: Number(map.year),
+      month: Number(map.month), // 1-12
+      day: Number(map.day),
+      hour: Number(map.hour) % 24, // some engines report midnight as "24"
+      minute: Number(map.minute),
+    }
+  })()
+  const istTodayKey = istNow.year * 10000 + istNow.month * 100 + istNow.day
 
   const isDayAvailable = (day) => {
     if (!day) return false
-    const dateObj = new Date(year, month, day)
-    dateObj.setHours(0, 0, 0, 0)
-
-    if (dateObj < today) return false
-
-    const dayOfWeek = dateObj.getDay()
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6 // Saturday or Sunday
-    return !isWeekend
+    const cellKey = year * 10000 + (month + 1) * 100 + day
+    return cellKey >= istTodayKey
   }
 
   const selectDateHandler = (day) => {
@@ -82,6 +104,23 @@ export default function BookingModal() {
     "03:30 PM"
   ]
 
+  // A slot is only "already past" when the selected date is today (IST) —
+  // any other future date is always fully open.
+  const isSlotPast = (timeStr) => {
+    if (!selectedDate) return false
+    const selKey = selectedDate.getFullYear() * 10000 + (selectedDate.getMonth() + 1) * 100 + selectedDate.getDate()
+    if (selKey !== istTodayKey) return false
+
+    const match = timeStr.match(/^(\d{2}):(\d{2}) (AM|PM)$/)
+    if (!match) return false
+    let hour = Number(match[1]) % 12
+    if (match[3] === "PM") hour += 12
+    const slotMinutes = hour * 60 + Number(match[2])
+    const nowMinutes = istNow.hour * 60 + istNow.minute
+
+    return slotMinutes <= nowMinutes
+  }
+
   const nextMonth = () => {
     setViewDate(new Date(year, month + 1, 1))
   }
@@ -91,6 +130,15 @@ export default function BookingModal() {
     const currentToday = new Date()
     if (year === currentToday.getFullYear() && month <= currentToday.getMonth()) return
     setViewDate(new Date(year, month - 1, 1))
+  }
+
+  // Local Y-M-D components, not .toISOString() (which converts to UTC and
+  // can shift the date by a day depending on the visitor's timezone offset).
+  const toIsoDate = (d) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, "0")
+    const day = String(d.getDate()).padStart(2, "0")
+    return `${y}-${m}-${day}`
   }
 
   const handleConfirm = async (e) => {
@@ -103,23 +151,25 @@ export default function BookingModal() {
     setError("")
 
     try {
-      const res = await fetch("/api/booking", {
+      const res = await fetch("/api/booking.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           email,
-          date: selectedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+          date: toIsoDate(selectedDate),
           time: selectedTime,
-          message
+          message,
+          hp_field_x: hpFieldX
         })
       })
+
+      const data = await res.json().catch(() => ({}))
 
       if (res.ok) {
         setStep(3)
       } else {
-        const errData = await res.json()
-        setError(errData.error || "Something went wrong. Please try again.")
+        setError(data.error || "Something went wrong. Please try again.")
       }
     } catch (err) {
       setError("Failed to connect to the server.")
@@ -216,16 +266,21 @@ export default function BookingModal() {
                       <span className="booking-selected-date-label">
                         {selectedDate.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' })}
                       </span>
+                      <p className="booking-timezone-note">All times are in IST (UTC+5:30)</p>
                       <div className="booking-slots-list">
-                        {timeSlots.map((time, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setSelectedTime(time)}
-                            className={`booking-slot-btn ${selectedTime === time ? "selected" : ""}`}
-                          >
-                            {time}
-                          </button>
-                        ))}
+                        {timeSlots.map((time, idx) => {
+                          const past = isSlotPast(time)
+                          return (
+                            <button
+                              key={idx}
+                              disabled={past}
+                              onClick={() => setSelectedTime(time)}
+                              className={`booking-slot-btn ${selectedTime === time ? "selected" : ""}`}
+                            >
+                              {time}
+                            </button>
+                          )
+                        })}
                       </div>
                       
                       {selectedTime && (
@@ -292,6 +347,18 @@ export default function BookingModal() {
                   />
                 </div>
 
+                {/* Honeypot: invisible to real users, catches bots that fill every field. */}
+                <input
+                  type="text"
+                  name="hp_field_x"
+                  value={hpFieldX}
+                  onChange={(e) => setHpFieldX(e.target.value)}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
+                />
+
                 {error && <p className="booking-error-msg">{error}</p>}
 
                 <button type="submit" disabled={loading} className="btn btn-solid" style={{ width: "100%", justifyContent: "center" }}>
@@ -304,9 +371,9 @@ export default function BookingModal() {
           {step === 3 && (
             <div className="booking-step3">
               <div className="success-icon" aria-hidden="true">✓</div>
-              <h4 className="booking-flow-title">Meeting Confirmed!</h4>
+              <h4 className="booking-flow-title">Request Received!</h4>
               <p className="booking-success-desc">
-                Your consultation session with Evoletrix has been scheduled.
+                We'll confirm your slot by email within 24 hours.
               </p>
               
               <div className="booking-summary-card">

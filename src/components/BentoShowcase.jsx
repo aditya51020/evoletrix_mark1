@@ -1,6 +1,13 @@
 import React from "react"
+import useIsMobile from "../hooks/useIsMobile"
 
 export default function BentoShowcase() {
+  // Not rendered on mobile at all (rather than hidden via CSS), so it
+  // costs nothing on phones — no DOM nodes, no paint/layout work for
+  // this whole section.
+  const isMobile = useIsMobile()
+  if (isMobile) return null
+
   return (
     <section className="section bento-showcase" id="services" aria-label="Evoletrix Startup Playbook">
       <div className="shell">

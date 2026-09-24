@@ -1,149 +1,131 @@
-import React from "react"
+import React, { useState, useRef } from "react"
+import { products } from "../data/products"
+import ProductIcon from "./ProductIcon"
+
+// Set true to force the "Our Products" section to render locally for
+// review, even if no product has a url yet. Must be false in production.
+const PREVIEW_ALL = false
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+)
 
 export default function PortfolioPage() {
-  const projects = [
-    {
-      brand: "HEALTHSYNC",
-      category: "Healthcare",
-      desc: "Built a fully HIPAA-compliant patient diagnostics and clinical records sync portal.",
-      metric: "Reduced diagnostic record latency by 45% across clinics.",
-      grad: "linear-gradient(135deg, #3b82f6, #06b6d4)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M19 12H5M12 19V5"/></svg>
-    },
-    {
-      brand: "TRUST PAY",
-      category: "FinTech & Banking",
-      desc: "Designed and engineered a high-volume custom currency settlement ledger.",
-      metric: "Settles $500k+ in daily volumes with audited, zero-fault transaction trails.",
-      grad: "linear-gradient(135deg, #10b981, #059669)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-    },
-    {
-      brand: "QUICKCAB",
-      category: "On-Demand Logistics",
-      desc: "Developed a real-time driver dispatch matching algorithm and mapping dashboard.",
-      metric: "Reduced dispatch match times to under 2 seconds during peak hours.",
-      grad: "linear-gradient(135deg, #f59e0b, #d97706)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
-    },
-    {
-      brand: "PLCMONITOR",
-      category: "IoT Manufacturing",
-      desc: "Integrated factory automation uptime sensor streams with central PLC controllers.",
-      metric: "Decreased unscheduled machinery downtime by 14% across plant lines.",
-      grad: "linear-gradient(135deg, #6366f1, #4f46e5)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>
-    },
-    {
-      brand: "SOLARGRID",
-      category: "Clean Energy",
-      desc: "Constructed solar energy output modeling dashboards with predictive analytics.",
-      metric: "Processes 10M+ daily telemetry data points for municipal power grids.",
-      grad: "linear-gradient(135deg, #ec4899, #db2777)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 2v20M5 12h14"/></svg>
-    },
-    {
-      brand: "NEWSENGINE",
-      category: "Digital Media",
-      desc: "Pioneered serverless editorial backends and global CDN publishing layout.",
-      metric: "Seamlessly delivers page caching for 1M+ active monthly readers.",
-      grad: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
-      icon: <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M4 22h16M4 18h16"/></svg>
-    }
-  ]
+  const [selectedIdx, setSelectedIdx] = useState(0)
+  const itemRefs = useRef([])
+
+  // The section only makes sense once there's at least one live product to
+  // show — an all-"Coming soon" showcase isn't worth a whole page section.
+  // Products without a url still render as "Coming soon" once the section
+  // is visible (i.e. once at least one other product does have a url).
+  const hasAnyProductUrl = products.some((p) => p.url && p.url.trim())
+  const showProductsSection = hasAnyProductUrl || PREVIEW_ALL
+
+  const selectedProduct = products[selectedIdx]
+  const hasSelectedUrl = Boolean(selectedProduct.url && selectedProduct.url.trim())
+  const displayUrl = hasSelectedUrl
+    ? selectedProduct.url.replace(/^https?:\/\//, "")
+    : `${selectedProduct.key}.evoletrix.com`
+
+  const handleListKeyDown = (e) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
+    e.preventDefault()
+    const delta = e.key === "ArrowDown" ? 1 : -1
+    const nextIdx = Math.min(products.length - 1, Math.max(0, selectedIdx + delta))
+    setSelectedIdx(nextIdx)
+    itemRefs.current[nextIdx]?.focus()
+  }
 
   return (
     <>
-      <section className="section portfolio-page-section" aria-labelledby="portTitle" style={{ paddingBlock: "96px 64px" }}>
+      {/* OUR PRODUCTS */}
+      {showProductsSection && (
+      <section className="section portfolio-page-section" aria-labelledby="productsTitle" style={{ paddingBlock: "96px 64px" }}>
         <div className="shell">
-          <header className="ind-page-header" style={{ marginBottom: "64px" }}>
-            <h1 id="portTitle" className="display" style={{ marginBottom: "16px" }}>Our Work</h1>
+          <header className="ind-page-header" style={{ marginBottom: "56px" }}>
+            <h2 id="productsTitle" className="display" style={{ marginBottom: "16px" }}>Our Products</h2>
             <p className="ind-page-sub">
-              Explore the custom applications, database engineering, and scaling projects we constructed for our global partners.
+              In-house software products we've built and maintain ourselves, separate from the client case studies below.
             </p>
           </header>
 
-          {/* Grid of Portfolio Cards (Image 2 style visual header + White background body) */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "28px" }} className="port-grid">
-            {projects.map((proj, idx) => (
-              <div 
-                key={idx} 
-                className="port-card"
-                style={{ 
-                  background: "#ffffff", 
-                  border: "1px solid rgba(0, 0, 0, 0.08)", 
-                  borderRadius: "var(--radius)", 
-                  overflow: "hidden", 
-                  display: "flex", 
-                  flexDirection: "column",
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.03)"
-                }}
-              >
-                {/* Image/Gradient top block with centered icon - Like Image 2 */}
-                <div 
-                  style={{ 
-                    height: "120px", 
-                    background: proj.grad, 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    margin: "20px 20px 0 20px", 
-                    borderRadius: "var(--radius-sm)" 
-                  }}
-                >
-                  <span 
-                    style={{ 
-                      width: "44px", 
-                      height: "44px", 
-                      borderRadius: "50%", 
-                      background: "rgba(255, 255, 255, 0.18)", 
-                      border: "1px solid rgba(255,255,255,0.3)", 
-                      display: "grid", 
-                      placeItems: "center", 
-                      color: "#ffffff" 
-                    }}
+          <div className="product-switch-layout">
+            <div className="product-switch-list" role="listbox" aria-label="Our products" onKeyDown={handleListKeyDown}>
+              {products.map((prod, idx) => {
+                const isSelected = idx === selectedIdx
+                return (
+                  <button
+                    key={prod.key}
+                    ref={(el) => { itemRefs.current[idx] = el }}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    tabIndex={isSelected ? 0 : -1}
+                    className={`product-switch-item ${isSelected ? "is-selected" : ""}`}
+                    onClick={() => setSelectedIdx(idx)}
                   >
-                    {proj.icon}
-                  </span>
-                </div>
-
-                {/* Card Content area */}
-                <div style={{ padding: "24px", display: "flex", flexDirection: "column", flex: 1 }}>
-                  <span style={{ fontSize: "11px", fontWeight: "700", fontFamily: "var(--font-mono)", color: "var(--brand)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "4px" }}>
-                    {proj.category}
-                  </span>
-                  
-                  {/* Brand logo style text - Like Image 3 */}
-                  <h3 style={{ fontSize: "18px", fontWeight: "700", fontFamily: "var(--font-mono)", color: "#18181b", letterSpacing: "0.05em", margin: "4px 0 12px 0" }}>
-                    {proj.brand}
-                  </h3>
-
-                  <p style={{ color: "#44444a", fontSize: "13.5px", lineHeight: "1.6", marginBottom: "16px" }}>
-                    {proj.desc}
-                  </p>
-
-                  <div style={{ borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: "14px", marginTop: "auto" }}>
-                    <span style={{ fontSize: "11px", fontWeight: "700", fontFamily: "var(--font-mono)", color: "#71717a", display: "block", marginBottom: "4px" }}>
-                      KEY METRIC
+                    <span className="mega-menu-tile" style={{ background: prod.accent }} aria-hidden="true">
+                      <ProductIcon name={prod.icon} width={22} height={22} />
                     </span>
-                    <p style={{ color: "#18181b", fontSize: "13px", fontWeight: "600", lineHeight: "1.4" }}>
-                      {proj.metric}
-                    </p>
-                  </div>
-
-                  <button 
-                    onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
-                    className="btn btn-dark" 
-                    style={{ background: "#18181b", color: "#ffffff", border: "none", marginTop: "24px", width: "100%", justifyContent: "center" }}
-                  >
-                    View Case Study →
+                    <span className="product-switch-item-text">
+                      <span className="product-switch-item-name">{prod.name}</span>
+                      <span className="product-switch-item-tagline">{prod.tagline}</span>
+                    </span>
                   </button>
+                )
+              })}
+            </div>
+
+            <div className="product-preview" key={selectedIdx}>
+              <div className="browser-frame">
+                <div className="browser-frame-bar">
+                  <span className="browser-frame-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                  <span className="browser-frame-url">{displayUrl}</span>
+                </div>
+                <div className="browser-frame-body">
+                  {selectedProduct.image ? (
+                    <img src={selectedProduct.image} alt={`${selectedProduct.name} screenshot`} className="browser-frame-image" />
+                  ) : (
+                    <div className="browser-frame-mockup" style={{ background: selectedProduct.accent }}>
+                      <ProductIcon name={selectedProduct.icon} width={56} height={56} />
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
+
+              <div className="product-preview-info">
+                <h3>{selectedProduct.name}</h3>
+                <p className="product-preview-tagline">{selectedProduct.tagline}</p>
+
+                <ul className="product-preview-features">
+                  {selectedProduct.features.map((f, i) => (
+                    <li key={i}><CheckIcon /> {f}</li>
+                  ))}
+                </ul>
+
+                {selectedProduct.stack.length > 0 && (
+                  <div className="product-preview-stack">
+                    {selectedProduct.stack.map((s, i) => (
+                      <span key={i} className="stack-chip">{s}</span>
+                    ))}
+                  </div>
+                )}
+
+                {hasSelectedUrl ? (
+                  <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-solid">
+                    Visit live ↗
+                  </a>
+                ) : (
+                  <button className="btn btn-solid" disabled>Coming soon</button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* Spacer transition: Dark to Light (Black to White) */}
       <div className="bg-transition-spacer" aria-hidden="true"></div>
@@ -155,7 +137,7 @@ export default function PortfolioPage() {
           <p style={{ color: "var(--fg-dim)", fontSize: "16px", maxWidth: "600px", margin: "0 auto 32px" }}>
             Let's discuss how we can build high-performance, secure cloud products for your target sectors.
           </p>
-          <button 
+          <button
             onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
             className="btn btn-dark btn-lg"
           >

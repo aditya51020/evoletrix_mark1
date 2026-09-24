@@ -9,6 +9,113 @@ export default function CareersPage() {
   const [activeMode, setActiveMode] = useState("All")
   const [selectedJob, setSelectedJob] = useState(null)
 
+  const [applyMode, setApplyMode] = useState(false)
+  const [applyName, setApplyName] = useState("")
+  const [applyEmail, setApplyEmail] = useState("")
+  const [applyPhone, setApplyPhone] = useState("")
+  const [applyCoverNote, setApplyCoverNote] = useState("")
+  const [applyResume, setApplyResume] = useState(null)
+  const [applyHp, setApplyHp] = useState("")
+  const [applyStatus, setApplyStatus] = useState("") // "", "loading", "success", "error"
+  const [applyError, setApplyError] = useState("")
+
+  const openJobModal = (job) => {
+    setSelectedJob(job)
+    setApplyMode(false)
+    setApplyName("")
+    setApplyEmail("")
+    setApplyPhone("")
+    setApplyCoverNote("")
+    setApplyResume(null)
+    setApplyHp("")
+    setApplyStatus("")
+    setApplyError("")
+  }
+
+  const closeJobModal = () => {
+    setSelectedJob(null)
+    setApplyMode(false)
+  }
+
+  const MAX_RESUME_BYTES = 5 * 1024 * 1024
+
+  const handleResumeChange = (e) => {
+    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null
+    if (file && file.size > MAX_RESUME_BYTES) {
+      setApplyError("Resume file is too large (max 5 MB).")
+      e.target.value = ""
+      setApplyResume(null)
+      return
+    }
+    setApplyError("")
+    setApplyResume(file)
+  }
+
+  const handleApplySubmit = async (e) => {
+    e.preventDefault()
+    if (!applyResume) {
+      setApplyError("Please attach your resume (PDF).")
+      return
+    }
+    setApplyStatus("loading")
+    setApplyError("")
+
+    const formData = new FormData()
+    formData.append("job_id", selectedJob.id)
+    formData.append("name", applyName)
+    formData.append("email", applyEmail)
+    formData.append("phone", applyPhone)
+    formData.append("cover_note", applyCoverNote)
+    formData.append("resume", applyResume)
+    formData.append("hp_field_x", applyHp)
+
+    try {
+      // No Content-Type header here on purpose — the browser sets the
+      // multipart boundary itself; setting it manually breaks the upload.
+      const res = await fetch("/api/apply.php", {
+        method: "POST",
+        body: formData,
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (res.ok) {
+        setApplyStatus("success")
+      } else {
+        setApplyStatus("error")
+        setApplyError(data.error || "Something went wrong. Please try again.")
+      }
+    } catch (err) {
+      setApplyStatus("error")
+      setApplyError("Failed to connect to the server. Please try again.")
+    }
+  }
+
+  const [jobs, setJobs] = useState([])
+  const [jobsStatus, setJobsStatus] = useState("loading") // "loading" | "ready" | "error"
+  const [jobsError, setJobsError] = useState("")
+
+  const loadJobs = () => {
+    setJobsStatus("loading")
+    setJobsError("")
+    fetch("/api/jobs.php")
+      .then(async (res) => {
+        const data = await res.json().catch(() => null)
+        if (!res.ok || !Array.isArray(data)) {
+          throw new Error((data && data.error) || "Failed to load open positions.")
+        }
+        setJobs(data)
+        setJobsStatus("ready")
+      })
+      .catch((err) => {
+        setJobsError(err.message || "Failed to load open positions.")
+        setJobsStatus("error")
+      })
+  }
+
+  useEffect(() => {
+    loadJobs()
+  }, [])
+
   // Accordion state for sidebar filters (closed by default on load)
   const [openFilters, setOpenFilters] = useState({
     function: false,
@@ -62,158 +169,6 @@ export default function CareersPage() {
     </svg>
   )
 
-  const jobs = [
-    { 
-      title: "AI/ML Engineer", 
-      location: "Noida", 
-      department: "Engineering", 
-      experience: "Senior (5+ yrs)",
-      workMode: "On-site",
-      about: "Evoletrix is seeking a production-focused AI/ML Engineer to design, build, and deploy robust machine learning models and intelligent agentic architectures. You will take charge of our AI capabilities from model selection to secure API delivery.",
-      responsibilities: [
-        "Design, train, and optimize deep learning algorithms for client workflows.",
-        "Implement high-performance Retrieval-Augmented Generation (RAG) search engines.",
-        "Integrate autonomous agentic pipelines to automate complex data processing tasks.",
-        "Work closely with DevOps to deploy models inside containerized GPU servers."
-      ],
-      requirements: [
-        "3+ years of professional machine learning development experience.",
-        "Strong proficiency in Python, PyTorch/TensorFlow, and Hugging Face library.",
-        "Deep familiarity with vector databases (Pinecone, pgvector) and embeddings.",
-        "Experience optimizing model latency and memory footprints in cloud setups."
-      ]
-    },
-    { 
-      title: "Tech Lead Node.js", 
-      location: "Noida", 
-      department: "Engineering", 
-      experience: "Senior (5+ yrs)",
-      workMode: "Hybrid",
-      about: "We are looking for a hands-on Tech Lead to architect and optimize our Node.js microservices. You will guide backend engineering standards, enforce database reliability, and mentor a talented engineering team.",
-      responsibilities: [
-        "Architect and maintain highly scalable RESTful and GraphQL API servers.",
-        "Manage SQL and NoSQL database schemas, queries, and optimization strategies.",
-        "Oversee security compliance, authentication tokens, and rate limiters.",
-        "Review pull requests and enforce test coverage, clean code patterns, and speed profiles."
-      ],
-      requirements: [
-        "6+ years of professional backend development with Node.js and Express.",
-        "Expertise in PostgreSQL/MySQL query tuning and index management.",
-        "Familiarity with Redis caching, Docker containerization, and AWS hosting.",
-        "Exceptional technical leadership and communication capabilities."
-      ]
-    },
-    { 
-      title: "Social Media Executive", 
-      location: "Noida", 
-      department: "Marketing", 
-      experience: "Junior (1-3 yrs)",
-      workMode: "On-site",
-      about: "Join our growth squad to amplify Evoletrix`s brand presence across digital networks. You will translate complex software projects and engineering stories into engaging, reader-friendly content.",
-      responsibilities: [
-        "Curate, schedule, and moderate visual content on LinkedIn, X (Twitter), and tech forums.",
-        "Analyze traffic data and campaign conversions to optimize community outreach.",
-        "Collaborate with developers and UI designers to draft informative carousel slide decks."
-      ],
-      requirements: [
-        "1-3 years of marketing or social media management experience.",
-        "Exceptional copywriting skills with an eye for technical storytelling.",
-        "Familiarity with visual design tools like Figma or Canva.",
-        "Prior experience in B2B SaaS or technical consultancy agencies is a huge plus."
-      ]
-    },
-    { 
-      title: "Full Stack Developer", 
-      location: "Faridabad", 
-      department: "Engineering", 
-      experience: "Mid-level (3-5 yrs)",
-      workMode: "Hybrid",
-      about: "We are looking for a versatile Full Stack Developer to build interactive client dashboards. You will bridge frontend interfaces with server-side microservices.",
-      responsibilities: [
-        "Implement pixel-perfect UI screens in React.js and Tailwind CSS.",
-        "Develop backend endpoint logic, data validations, and database hooks in Node.js.",
-        "Write comprehensive unit tests and optimize website core vitals."
-      ],
-      requirements: [
-        "3+ years of full-stack engineering experience.",
-        "Advanced command of JavaScript/TypeScript, React.js, Node.js, and CSS.",
-        "Experience utilizing PostgreSQL or MongoDB database architectures.",
-        "Familiarity with Git branching and Vercel/Render deployments."
-      ]
-    },
-    { 
-      title: "Senior UI/UX Designer", 
-      location: "Noida", 
-      department: "Design", 
-      experience: "Senior (5+ yrs)",
-      workMode: "Remote",
-      about: "Evoletrix is seeking a Senior UI/UX Designer to craft premium product mockups and design tokens for digital portals. You will lead client design discovery sessions.",
-      responsibilities: [
-        "Define typography, spacing grids, and component libraries inside Figma.",
-        "Design wireframes, high-fidelity mockups, and interactive prototypes.",
-        "Collaborate with developers to align CSS styling with the original layouts."
-      ],
-      requirements: [
-        "5+ years of digital product UI/UX design experience.",
-        "Outstanding design portfolio showcasing clean, grid-based typography.",
-        "Advanced proficiency in Figma, design systems, and responsive layouts."
-      ]
-    },
-    { 
-      title: "DevOps Architect", 
-      location: "Noida", 
-      department: "Engineering", 
-      experience: "Senior (5+ yrs)",
-      workMode: "Remote",
-      about: "Scale and secure our cloud infrastructure. You will optimize CI/CD pipelines, coordinate deployments, and audit environment security.",
-      responsibilities: [
-        "Build and monitor containerized cluster stacks in AWS and GCP.",
-        "Optimize automated Git actions, unit testing triggers, and static checking.",
-        "Configure CDN layers, firewalls, and server encryption standards."
-      ],
-      requirements: [
-        "5+ years of DevOps or Cloud infrastructure experience.",
-        "Excellent command of Docker, Terraform, Kubernetes, and GitHub Actions.",
-        "Deep familiarity with server security audits and hosting cost control."
-      ]
-    },
-    { 
-      title: "GIS Specialist", 
-      location: "Faridabad", 
-      department: "Engineering", 
-      experience: "Mid-level (3-5 yrs)",
-      workMode: "On-site",
-      about: "Work inside our mapping team to coordinate spatial database indexing and render high-resolution raster files on interactive maps.",
-      responsibilities: [
-        "Manage, clean, and convert geospatial data projections (raster and shapefiles).",
-        "Write and optimize PostGIS queries and custom Python geoprocessing algorithms.",
-        "Integrate geofences and maps into frontend React dashboards via Mapbox APIs."
-      ],
-      requirements: [
-        "3+ years of experience working with GIS tools and databases.",
-        "Strong capabilities in PostGIS, Python (GDAL, Shapely), and JavaScript maps.",
-        "Excellent grasp of coordinates, geodetic projections, and coordinate datums."
-      ]
-    },
-    { 
-      title: "Product Manager", 
-      location: "Remote", 
-      department: "Product Management", 
-      experience: "Senior (5+ yrs)",
-      workMode: "Remote",
-      about: "Evoletrix is seeking a Product Manager to translate business goals into sprint milestones. You will coordinate with developers and report progress to stakeholders.",
-      responsibilities: [
-        "Define detailed product scopes, specifications, and backlog milestones.",
-        "Lead client alignment calls, prioritize tasks, and resolve team blockers.",
-        "Validate user flows and coordinate launch strategies."
-      ],
-      requirements: [
-        "5+ years of software product management experience.",
-        "Strong technical understanding of APIs, data flow, and frontend components.",
-        "Outstanding documentation, task tracking, and communication habits."
-      ]
-    }
-  ]
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           job.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -473,49 +428,76 @@ export default function CareersPage() {
               </div>
 
               {/* Positions indicator */}
-              <div style={{ color: "#71717a", fontSize: "13px", fontWeight: "600" }}>
-                Showing {filteredJobs.length} {filteredJobs.length === 1 ? "position" : "positions"}
-              </div>
+              {jobsStatus === "ready" && (
+                <div style={{ color: "#71717a", fontSize: "13px", fontWeight: "600" }}>
+                  Showing {filteredJobs.length} {filteredJobs.length === 1 ? "position" : "positions"}
+                </div>
+              )}
 
               {/* Jobs List */}
               <div style={{ display: "flex", flexDirection: "column", borderTop: "1px solid #e4e4e7" }}>
-                {filteredJobs.length > 0 ? (
-                  filteredJobs.map((job, idx) => (
-                    <div 
-                      key={idx}
-                      onClick={() => setSelectedJob(job)}
-                      style={{ 
-                        display: "flex", 
-                        justifyContent: "space-between", 
-                        alignItems: "center", 
-                        padding: "24px 20px", 
-                        borderBottom: "1px solid #e4e4e7",
-                        cursor: "pointer",
-                        transition: "background 0.2s"
-                      }}
-                      className="job-row-item"
-                    >
-                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <span style={{ fontSize: "16px", fontWeight: "700", color: "#18181b" }}>{job.title}</span>
-                        {/* Safe Pipe Separators used to prevent question marks */}
-                        <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "#71717a" }}>
-                          {job.department} | {job.experience} | {job.workMode}
-                        </span>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-                        <span style={{ fontSize: "14px", color: "#18181b", fontWeight: "500" }}>{job.location}</span>
-                        <span style={{ color: "#18181b", display: "inline-flex" }}>
-                          {getArrow()}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
+                {jobsStatus === "loading" && (
+                  <div style={{ padding: "64px 20px", textAlign: "center", color: "#71717a", fontSize: "14px" }}>
+                    Loading open positions…
+                  </div>
+                )}
+
+                {jobsStatus === "error" && (
                   <div style={{ padding: "64px 20px", textAlign: "center", color: "#71717a", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
                     <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span style={{ fontSize: "15px", fontWeight: "600", color: "#18181b" }}>No opportunities match your criteria</span>
-                    <span style={{ fontSize: "13px", color: "#71717a", maxWidth: "340px", lineHeight: "1.5" }}>Try adjusting your filters or search query to find open positions in other functions or locations.</span>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "#18181b" }}>Couldn't load open positions</span>
+                    <span style={{ fontSize: "13px", color: "#71717a", maxWidth: "340px", lineHeight: "1.5" }}>{jobsError}</span>
+                    <button onClick={loadJobs} className="btn btn-dark" style={{ padding: "10px 20px", fontSize: "13px" }}>Retry</button>
                   </div>
+                )}
+
+                {jobsStatus === "ready" && jobs.length === 0 && (
+                  <div style={{ padding: "64px 20px", textAlign: "center", color: "#71717a", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "#18181b" }}>No open positions right now</span>
+                    <span style={{ fontSize: "13px", color: "#71717a", maxWidth: "340px", lineHeight: "1.5" }}>Check back soon — new roles are posted regularly.</span>
+                  </div>
+                )}
+
+                {jobsStatus === "ready" && jobs.length > 0 && (
+                  filteredJobs.length > 0 ? (
+                    filteredJobs.map((job, idx) => (
+                      <div
+                        key={job.id ?? idx}
+                        onClick={() => openJobModal(job)}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "24px 20px",
+                          borderBottom: "1px solid #e4e4e7",
+                          cursor: "pointer",
+                          transition: "background 0.2s"
+                        }}
+                        className="job-row-item"
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <span style={{ fontSize: "16px", fontWeight: "700", color: "#18181b" }}>{job.title}</span>
+                          {/* Safe Pipe Separators used to prevent question marks */}
+                          <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "#71717a" }}>
+                            {job.department} | {job.experience} | {job.workMode}
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                          <span style={{ fontSize: "14px", color: "#18181b", fontWeight: "500" }}>{job.location}</span>
+                          <span style={{ color: "#18181b", display: "inline-flex" }}>
+                            {getArrow()}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: "64px 20px", textAlign: "center", color: "#71717a", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                      <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#71717a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <span style={{ fontSize: "15px", fontWeight: "600", color: "#18181b" }}>No opportunities match your criteria</span>
+                      <span style={{ fontSize: "13px", color: "#71717a", maxWidth: "340px", lineHeight: "1.5" }}>Try adjusting your filters or search query to find open positions in other functions or locations.</span>
+                    </div>
+                  )
                 )}
               </div>
 
@@ -528,47 +510,47 @@ export default function CareersPage() {
       {/* Spacer transition: Light to Dark (White to Black) */}
       <div className="bg-transition-spacer-bottom" aria-hidden="true"></div>
 
-      {/* JOB DETAIL OVERLAY MODAL */}
+      {/* JOB DETAIL / APPLY OVERLAY MODAL */}
       {selectedJob && (
-        <div 
-          style={{ 
-            position: "fixed", 
-            inset: 0, 
-            background: "rgba(0, 0, 0, 0.65)", 
-            zIndex: 1000, 
-            display: "grid", 
-            placeItems: "center", 
-            padding: "24px", 
-            backdropFilter: "blur(5px)" 
-          }} 
-          onClick={() => setSelectedJob(null)}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.65)",
+            zIndex: 1000,
+            display: "grid",
+            placeItems: "center",
+            padding: "24px",
+            backdropFilter: "blur(5px)"
+          }}
+          onClick={closeJobModal}
         >
-          <div 
-            style={{ 
-              background: "#ffffff", 
-              border: "1px solid #e4e4e7", 
-              borderRadius: "var(--radius)", 
-              width: "100%", 
-              maxWidth: "680px", 
-              maxHeight: "85vh", 
-              overflowY: "auto", 
-              padding: "40px", 
-              position: "relative", 
+          <div
+            style={{
+              background: "#ffffff",
+              border: "1px solid #e4e4e7",
+              borderRadius: "var(--radius)",
+              width: "100%",
+              maxWidth: "680px",
+              maxHeight: "85vh",
+              overflowY: "auto",
+              padding: "40px",
+              position: "relative",
               boxShadow: "0 24px 64px rgba(0,0,0,0.15)",
               textAlign: "left"
-            }} 
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button via clean SVG icon */}
-            <button 
-              onClick={() => setSelectedJob(null)}
-              style={{ 
-                position: "absolute", 
-                right: "24px", 
-                top: "24px", 
-                background: "none", 
-                border: "none", 
-                cursor: "pointer", 
+            <button
+              onClick={closeJobModal}
+              style={{
+                position: "absolute",
+                right: "24px",
+                top: "24px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
                 color: "#71717a",
                 lineHeight: 1,
                 display: "inline-flex"
@@ -586,7 +568,7 @@ export default function CareersPage() {
               <h2 style={{ fontSize: "26px", fontWeight: "800", color: "#18181b", marginTop: "8px" }}>
                 {selectedJob.title}
               </h2>
-              
+
               {/* Emojis replaced with clean inline SVG icons */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginTop: "16px", fontSize: "13.5px", color: "#71717a" }}>
                 <span style={{ display: "flex", alignItems: "center" }}>
@@ -607,50 +589,163 @@ export default function CareersPage() {
             {/* Divider line */}
             <div style={{ height: "1px", background: "#e4e4e7", marginBlock: "24px" }}></div>
 
-            {/* About role */}
-            <div style={{ marginBottom: "24px" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "8px" }}>About the Role</h3>
-              <p style={{ fontSize: "13.5px", lineHeight: "1.65", color: "#44444a" }}>
-                {selectedJob.about}
-              </p>
-            </div>
+            {applyMode ? (
+              applyStatus === "success" ? (
+                <div style={{ textAlign: "center", padding: "24px 0" }}>
+                  <h3 style={{ fontSize: "18px", fontWeight: "700", color: "#18181b", marginBottom: "10px" }}>Application received!</h3>
+                  <p style={{ fontSize: "13.5px", color: "#44444a", lineHeight: "1.6", marginBottom: "24px" }}>
+                    We'll review it and get back to you if it's a good fit.
+                  </p>
+                  <button onClick={closeJobModal} className="btn btn-dark" style={{ padding: "12px 24px" }}>Close</button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplySubmit}>
+                  <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "16px" }}>Apply for this role</h3>
 
-            {/* Key Responsibilities */}
-            <div style={{ marginBottom: "24px" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "12px" }}>Key Responsibilities</h3>
-              <ul style={{ display: "grid", gap: "8px", paddingLeft: "20px", listStyleType: "disc" }}>
-                {selectedJob.responsibilities.map((resp, rIdx) => (
-                  <li key={rIdx} style={{ fontSize: "13.5px", lineHeight: "1.6", color: "#44444a" }}>
-                    {resp}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  <div style={{ display: "grid", gap: "16px" }}>
+                    <div className="form-group">
+                      <label htmlFor="ap-name" style={{ color: "#71717a" }}>Your Name *</label>
+                      <input
+                        id="ap-name"
+                        type="text"
+                        required
+                        value={applyName}
+                        onChange={(e) => setApplyName(e.target.value)}
+                        disabled={applyStatus === "loading"}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="ap-email" style={{ color: "#71717a" }}>Your Email *</label>
+                      <input
+                        id="ap-email"
+                        type="email"
+                        required
+                        value={applyEmail}
+                        onChange={(e) => setApplyEmail(e.target.value)}
+                        disabled={applyStatus === "loading"}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="ap-phone" style={{ color: "#71717a" }}>Phone</label>
+                      <input
+                        id="ap-phone"
+                        type="tel"
+                        value={applyPhone}
+                        onChange={(e) => setApplyPhone(e.target.value)}
+                        disabled={applyStatus === "loading"}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="ap-cover" style={{ color: "#71717a" }}>Cover Note (optional)</label>
+                      <textarea
+                        id="ap-cover"
+                        rows={4}
+                        maxLength={2000}
+                        value={applyCoverNote}
+                        onChange={(e) => setApplyCoverNote(e.target.value)}
+                        disabled={applyStatus === "loading"}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b", resize: "vertical" }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="ap-resume" style={{ color: "#71717a" }}>Resume (PDF, max 5 MB) *</label>
+                      <input
+                        id="ap-resume"
+                        type="file"
+                        accept="application/pdf,.pdf"
+                        required
+                        onChange={handleResumeChange}
+                        disabled={applyStatus === "loading"}
+                        style={{ fontSize: "13px", color: "#18181b" }}
+                      />
+                    </div>
 
-            {/* Requirements */}
-            <div style={{ marginBottom: "32px" }}>
-              <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "12px" }}>Requirements</h3>
-              <ul style={{ display: "grid", gap: "8px", paddingLeft: "20px", listStyleType: "disc" }}>
-                {selectedJob.requirements.map((req, reqIdx) => (
-                  <li key={reqIdx} style={{ fontSize: "13.5px", lineHeight: "1.6", color: "#44444a" }}>
-                    {req}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    {/* Honeypot: invisible to real users, catches bots that fill every field. */}
+                    <input
+                      type="text"
+                      name="hp_field_x"
+                      value={applyHp}
+                      onChange={(e) => setApplyHp(e.target.value)}
+                      autoComplete="off"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
+                    />
 
-            {/* Apply Action Button */}
-            <button 
-              onClick={() => {
-                alert("Redirecting to Application Form...");
-                // Note: You can replace this action with a Google Form or custom submission URL later
-                window.open("https://docs.google.com/forms", "_blank");
-              }}
-              className="btn btn-dark"
-              style={{ width: "100%", padding: "14px", fontSize: "14px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
-            >
-              Apply for this Position {getArrow()}
-            </button>
+                    {applyError && (
+                      <p style={{ color: "#dc2626", fontSize: "13px" }}>{applyError}</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={applyStatus === "loading"}
+                      className="btn btn-dark"
+                      style={{ width: "100%", padding: "14px", fontSize: "14px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                    >
+                      {applyStatus === "loading" ? "Submitting…" : "Submit Application"}
+                    </button>
+                    <p style={{ fontSize: "11px", color: "#a1a1aa", textAlign: "center", marginTop: "-8px" }}>
+                      Your details are used only to evaluate your application.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() => setApplyMode(false)}
+                      disabled={applyStatus === "loading"}
+                      style={{ background: "none", border: "none", color: "#71717a", fontSize: "13px", cursor: "pointer", justifySelf: "center" }}
+                    >
+                      ← Back to role details
+                    </button>
+                  </div>
+                </form>
+              )
+            ) : (
+              <>
+                {/* About role */}
+                <div style={{ marginBottom: "24px" }}>
+                  <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "8px" }}>About the Role</h3>
+                  <p style={{ fontSize: "13.5px", lineHeight: "1.65", color: "#44444a" }}>
+                    {selectedJob.about}
+                  </p>
+                </div>
+
+                {/* Key Responsibilities */}
+                <div style={{ marginBottom: "24px" }}>
+                  <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "12px" }}>Key Responsibilities</h3>
+                  <ul style={{ display: "grid", gap: "8px", paddingLeft: "20px", listStyleType: "disc" }}>
+                    {selectedJob.responsibilities.map((resp, rIdx) => (
+                      <li key={rIdx} style={{ fontSize: "13.5px", lineHeight: "1.6", color: "#44444a" }}>
+                        {resp}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Requirements */}
+                <div style={{ marginBottom: "32px" }}>
+                  <h3 style={{ fontSize: "15px", fontWeight: "700", color: "#18181b", marginBottom: "12px" }}>Requirements</h3>
+                  <ul style={{ display: "grid", gap: "8px", paddingLeft: "20px", listStyleType: "disc" }}>
+                    {selectedJob.requirements.map((req, reqIdx) => (
+                      <li key={reqIdx} style={{ fontSize: "13.5px", lineHeight: "1.6", color: "#44444a" }}>
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Apply Action Button */}
+                <button
+                  onClick={() => setApplyMode(true)}
+                  className="btn btn-dark"
+                  style={{ width: "100%", padding: "14px", fontSize: "14px", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                >
+                  Apply for this Position {getArrow()}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

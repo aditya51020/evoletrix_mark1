@@ -9,6 +9,12 @@ __v0_jsx-dev-runtime.ts
 # Environment variables
 .env*.local
 
+# Evoletrix backend: real private config/secrets never get committed.
+# (Production lives outside the web root entirely; this only matters
+# for local XAMPP dev setups that mirror the prod layout next to public/.)
+/evoletrix-private/
+/public/api/config.php
+
 # Common ignores
 node_modules
 .next/

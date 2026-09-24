@@ -1,10 +1,32 @@
 import React, { useState } from "react"
+import useIsMobile from "../hooks/useIsMobile"
+import MobileAccordionCard from "./MobileAccordionCard"
 
 export default function IndustriesPage() {
+  const isMobile = useIsMobile()
+  const [mobileOpenIdx, setMobileOpenIdx] = useState(null)
+
   const [hoveredIdx, setHoveredIdx] = useState(null)
   const [clickedIdx, setClickedIdx] = useState(0) // Default to first industry (Healthcare)
+  // Separate from hoveredIdx/clickedIdx on purpose: this is the ONLY state
+  // that drives the card's persistent selected border. clickedIdx keeps
+  // driving the details-panel preview content (unchanged), independently.
+  // Desktop only — mobile uses mobileOpenIdx (inline accordion) instead.
+  const [selectedIdx, setSelectedIdx] = useState(0)
 
   const activeIdx = hoveredIdx !== null ? hoveredIdx : clickedIdx
+
+  const handleCardClick = (idx) => {
+    setClickedIdx(idx)
+    setSelectedIdx((prev) => (prev === idx ? null : idx))
+  }
+
+  const handleCardKeyDown = (e, idx) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      handleCardClick(idx)
+    }
+  }
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -62,30 +84,30 @@ export default function IndustriesPage() {
   }
 
   const industries = [
-    { name: "Healthcare", key: "healthcare", info: "HIPAA-compliant software systems designed for clinics and hospitals.", whatWeDid: "Engineered an automated diagnostics portal reducing patient record access latency by 45%.", brands: ["HealthSync", "MediCare Labs"] },
-    { name: "Wearables", key: "wearables", info: "IoT wearable device data synchronization and telemetry dashboards.", whatWeDid: "Created a real-time Bluetooth sync API for heart-rate tracking smart bands.", brands: ["FitBand", "PulseGo"] },
-    { name: "Fitness", key: "fitness", info: "Personal training apps, workout builders, and video instruction databases.", whatWeDid: "Built a modular workout planner serving 10k+ active training sessions daily.", brands: ["GymCore", "FlexFit"] },
-    { name: "On-Demand", key: "ondemand", info: "Real-time courier, taxi, and local delivery routing software.", whatWeDid: "Developed a geospatial driver dispatch algorithm with under 2-second match times.", brands: ["QuickCab", "LogiRun"] },
-    { name: "Restaurant", key: "restaurant", info: "Kitchen display systems, digital menu ordering, and reservation books.", whatWeDid: "Implemented an iPad ordering menu system for a 12-location dining chain.", brands: ["BistroQ", "DineEasy"] },
-    { name: "Construction", key: "construction", info: "Project site management trackers, estimators, and blueprint logs.", whatWeDid: "Engineered a cloud-based blueprint viewer with offline caching for field workers.", brands: ["BuildTech", "SteelLog"] },
-    { name: "Politics", key: "politics", info: "Voter database campaign mapping and analytics dashboard tools.", whatWeDid: "Designed a voter sentiment visualization chart showing precinct demographic breakdowns.", brands: ["VoteMap", "CivicPulse"] },
-    { name: "EMobility", key: "emobility", info: "EV charging station telemetry trackers and route optimization mapping.", whatWeDid: "Created a charger queue estimation algorithm for municipal electric fleets.", brands: ["GridCharge", "VoltCar"] },
-    { name: "Finance", key: "finance", info: "FinTech bank integrations, ledger auditing, and secure transaction logs.", whatWeDid: "Built a custom multi-currency settlement ledger handling $500k+ in daily volumes.", brands: ["Trust Pay", "Apex Wealth"] },
-    { name: "Entertainment", key: "entertainment", info: "Event ticket bookings, artist dashboards, and digital media channels.", whatWeDid: "Engineered a high-concurrency seat reservation booking engine for movie theater releases.", brands: ["CinemaBook", "ShowTix"] },
-    { name: "Education", key: "education", info: "Learning Management Systems (LMS), virtual classrooms, and grading matrices.", whatWeDid: "Pioneered a live classroom system with real-time whiteboards for 2,500 students.", brands: ["EduLive", "ClassBoard"] },
-    { name: "Events", key: "events", info: "Exhibition layout grids, schedule organizers, and check-in scanner apps.", whatWeDid: "Developed a QR scanner check-in ticket system running on standard iOS devices.", brands: ["TicketScan", "ExpoGrid"] },
-    { name: "Manufacturing", key: "manufacturing", info: "Inventory logistics, warehouse tracking, and equipment maintenance logs.", whatWeDid: "Built a machine uptime monitoring system integrating with PLC factory controllers.", brands: ["PLCMonitor", "FactoryIQ"] },
-    { name: "Energy", key: "energy", info: "Solar output grid trackers, billing integrations, and usage predictors.", whatWeDid: "Constructed a solar energy predictive modeling dashboard for community grids.", brands: ["SolarGrid", "PowerPredict"] },
-    { name: "OTT", key: "ott", info: "Live audio/video streaming, subscription access systems, and CDN maps.", whatWeDid: "Optimized a HLS video streaming pipeline reducing initial playback buffer to 0.8s.", brands: ["HLSStream", "PlayTube"] },
-    { name: "Food Delivery", key: "fooddelivery", info: "Restaurant integrations, courier route mapping, and real-time order states.", whatWeDid: "Engineered a delivery dispatch pipeline handling 5,000 active riders.", brands: ["SpeedyEat", "SquadRider"] },
-    { name: "Ecommerce", key: "ecommerce", info: "Storefront engines, checkout carts, and dynamic inventory sync tables.", whatWeDid: "Built an ecommerce storefront with instant search syncing across 50,000 SKUs.", brands: ["FastCart", "SearchSync"] },
-    { name: "Travel", key: "travel", info: "Itinerary builders, hotel room planners, and map location routing.", whatWeDid: "Designed a customized family travel planner with maps and offline synchronization.", brands: ["FamTrip", "GeoMap"] },
-    { name: "Real Estate", key: "realestate", info: "MLS property search maps, agent CRM tables, and virtual home tours.", whatWeDid: "Integrated a geo-referencing map searching properties by radius and custom bounds.", brands: ["GeoSearch", "MLSMap"] },
-    { name: "Magazine & Newspaper", key: "magazine", info: "Editorial publishing workflows, subscription paywalls, and newsletters.", whatWeDid: "Pioneered a serverless editorial engine delivering content to 1M+ monthly readers.", brands: ["NewsEngine", "PayWallX"] },
-    { name: "Social Media", key: "socialmedia", info: "Community channels, real-time messaging, and feed ranking algos.", whatWeDid: "Built a secure, encrypted direct messaging system with typing status indicators.", brands: ["ChatSec", "FeedRank"] },
-    { name: "Aviation", key: "aviation", info: "Flight scheduling boards, crew logbooks, and maintenance compliance.", whatWeDid: "Engineered a pilot duty-time log tracker compliant with CAA regulation frameworks.", brands: ["AeroCompliance", "CrewLog"] },
-    { name: "CSR", key: "csr", info: "Carbon footprint calculators, corporate donation trackers, and ESG reports.", whatWeDid: "Built an ESG carbon output auditing dashboard for mid-market clients.", brands: ["CarbonCalc", "DonationTrack"] },
-    { name: "Retail", key: "retail", info: "POS inventory sync systems, loyalty schemes, and barcode managers.", whatWeDid: "Constructed a retail POS inventory manager with real-time sync.", brands: ["POSSync", "LoyaltyCard"] }
+    { name: "Healthcare", key: "healthcare", info: "HIPAA-compliant software systems designed for clinics and hospitals.", whatWeDid: "Engineered an automated diagnostics portal reducing patient record access latency by 45%." },
+    { name: "Wearables", key: "wearables", info: "IoT wearable device data synchronization and telemetry dashboards.", whatWeDid: "Created a real-time Bluetooth sync API for heart-rate tracking smart bands." },
+    { name: "Fitness", key: "fitness", info: "Personal training apps, workout builders, and video instruction databases.", whatWeDid: "Built a modular workout planner serving 10k+ active training sessions daily." },
+    { name: "On-Demand", key: "ondemand", info: "Real-time courier, taxi, and local delivery routing software.", whatWeDid: "Developed a geospatial driver dispatch algorithm with under 2-second match times." },
+    { name: "Restaurant", key: "restaurant", info: "Kitchen display systems, digital menu ordering, and reservation books.", whatWeDid: "Implemented an iPad ordering menu system for a 12-location dining chain." },
+    { name: "Construction", key: "construction", info: "Project site management trackers, estimators, and blueprint logs.", whatWeDid: "Engineered a cloud-based blueprint viewer with offline caching for field workers." },
+    { name: "Politics", key: "politics", info: "Voter database campaign mapping and analytics dashboard tools.", whatWeDid: "Designed a voter sentiment visualization chart showing precinct demographic breakdowns." },
+    { name: "EMobility", key: "emobility", info: "EV charging station telemetry trackers and route optimization mapping.", whatWeDid: "Created a charger queue estimation algorithm for municipal electric fleets." },
+    { name: "Finance", key: "finance", info: "FinTech bank integrations, ledger auditing, and secure transaction logs.", whatWeDid: "Built a custom multi-currency settlement ledger handling $500k+ in daily volumes." },
+    { name: "Entertainment", key: "entertainment", info: "Event ticket bookings, artist dashboards, and digital media channels.", whatWeDid: "Engineered a high-concurrency seat reservation booking engine for movie theater releases." },
+    { name: "Education", key: "education", info: "Learning Management Systems (LMS), virtual classrooms, and grading matrices.", whatWeDid: "Pioneered a live classroom system with real-time whiteboards for 2,500 students." },
+    { name: "Events", key: "events", info: "Exhibition layout grids, schedule organizers, and check-in scanner apps.", whatWeDid: "Developed a QR scanner check-in ticket system running on standard iOS devices." },
+    { name: "Manufacturing", key: "manufacturing", info: "Inventory logistics, warehouse tracking, and equipment maintenance logs.", whatWeDid: "Built a machine uptime monitoring system integrating with PLC factory controllers." },
+    { name: "Energy", key: "energy", info: "Solar output grid trackers, billing integrations, and usage predictors.", whatWeDid: "Constructed a solar energy predictive modeling dashboard for community grids." },
+    { name: "OTT", key: "ott", info: "Live audio/video streaming, subscription access systems, and CDN maps.", whatWeDid: "Optimized a HLS video streaming pipeline reducing initial playback buffer to 0.8s." },
+    { name: "Food Delivery", key: "fooddelivery", info: "Restaurant integrations, courier route mapping, and real-time order states.", whatWeDid: "Engineered a delivery dispatch pipeline handling 5,000 active riders." },
+    { name: "Ecommerce", key: "ecommerce", info: "Storefront engines, checkout carts, and dynamic inventory sync tables.", whatWeDid: "Built an ecommerce storefront with instant search syncing across 50,000 SKUs." },
+    { name: "Travel", key: "travel", info: "Itinerary builders, hotel room planners, and map location routing.", whatWeDid: "Designed a customized family travel planner with maps and offline synchronization." },
+    { name: "Real Estate", key: "realestate", info: "MLS property search maps, agent CRM tables, and virtual home tours.", whatWeDid: "Integrated a geo-referencing map searching properties by radius and custom bounds." },
+    { name: "Magazine & Newspaper", key: "magazine", info: "Editorial publishing workflows, subscription paywalls, and newsletters.", whatWeDid: "Pioneered a serverless editorial engine delivering content to 1M+ monthly readers." },
+    { name: "Social Media", key: "socialmedia", info: "Community channels, real-time messaging, and feed ranking algos.", whatWeDid: "Built a secure, encrypted direct messaging system with typing status indicators." },
+    { name: "Aviation", key: "aviation", info: "Flight scheduling boards, crew logbooks, and maintenance compliance.", whatWeDid: "Engineered a pilot duty-time log tracker compliant with CAA regulation frameworks." },
+    { name: "CSR", key: "csr", info: "Carbon footprint calculators, corporate donation trackers, and ESG reports.", whatWeDid: "Built an ESG carbon output auditing dashboard for mid-market clients." },
+    { name: "Retail", key: "retail", info: "POS inventory sync systems, loyalty schemes, and barcode managers.", whatWeDid: "Constructed a retail POS inventory manager with real-time sync." }
   ]
 
   return (
@@ -100,203 +122,118 @@ export default function IndustriesPage() {
             </p>
           </header>
 
-          <div className="ind-split-layout">
-            {/* Master Grid (Left side) */}
-            <div className="ind-master-grid">
-              {industries.map((ind, idx) => {
-                const isActive = activeIdx === idx
-                return (
-                  <div
-                    key={idx}
-                    className={`ind-card ${isActive ? "is-active" : ""}`}
-                    onMouseEnter={() => setHoveredIdx(idx)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    onClick={() => setClickedIdx(idx)}
-                  >
-                    <div className="ind-icon-wrapper">
-                      {getIcon(ind.key)}
-                    </div>
-                    <span className="ind-title">{ind.name}</span>
-                  </div>
-                )
-              })}
-            </div>
+          {isMobile ? (
+            /* Mobile: inline accordion — tapping a card expands its info
+               directly below it, one open at a time. */
+            <div className="mobile-accordion-list">
+              {industries.map((ind, idx) => (
+                <MobileAccordionCard
+                  key={idx}
+                  id={`industry-${idx}`}
+                  isOpen={mobileOpenIdx === idx}
+                  onToggle={() => setMobileOpenIdx((prev) => (prev === idx ? null : idx))}
+                  triggerClassName={`ind-card mobile-accordion-trigger ${mobileOpenIdx === idx ? "is-selected" : ""}`}
+                  triggerContent={
+                    <>
+                      <div className="ind-icon-wrapper">
+                        {getIcon(ind.key)}
+                      </div>
+                      <span className="ind-title">{ind.name}</span>
+                    </>
+                  }
+                  panelContent={
+                    <div className="mobile-accordion-panel-content">
+                      <p className="ind-details-desc">{ind.info}</p>
 
-            {/* Details Panel (Right side) - White Background Image Card */}
-            <div className="ind-details-panel">
-              {/* Image/Gradient header box with centered icon and padding/margin styling */}
-              <div className="ind-details-visual-header">
-                <span className="ind-details-visual-icon">
-                  {getIcon(industries[activeIdx].key)}
-                </span>
-              </div>
+                      <div style={{ marginTop: "16px" }}>
+                        <h4>WHAT WE SHIPPED</h4>
+                        <div style={{ display: "flex", gap: "10px", alignItems: "start", marginTop: "8px" }}>
+                          <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
+                          <span style={{ color: "#27272a", fontSize: "13.5px", lineHeight: "1.5" }}>
+                            {ind.whatWeDid}
+                          </span>
+                        </div>
+                      </div>
 
-              <div className="ind-details-content">
-                <h3>{industries[activeIdx].name}</h3>
-                
-                <div className="ind-details-section">
-                  <p className="ind-details-desc">{industries[activeIdx].info}</p>
-                </div>
-                
-                <div className="ind-details-section" style={{ marginTop: "20px" }}>
-                  <h4>WHAT WE SHIPPED</h4>
-                  <div style={{ display: "flex", gap: "10px", alignItems: "start", marginTop: "8px" }}>
-                    <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
-                    <span style={{ color: "#27272a", fontSize: "13.5px", lineHeight: "1.5" }}>
-                      {industries[activeIdx].whatWeDid}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="ind-details-section" style={{ marginTop: "24px" }}>
-                  <h4>PARTNER BRANDS</h4>
-                  <div style={{ display: "flex", gap: "22px", flexWrap: "wrap", marginTop: "10px", alignItems: "center" }}>
-                    {industries[activeIdx].brands.map((brand, bIdx) => (
-                      <span 
-                        key={bIdx} 
-                        style={{ 
-                          fontSize: "13px", 
-                          fontWeight: "700", 
-                          fontFamily: "var(--font-mono)", 
-                          color: "#71717a", 
-                          letterSpacing: "0.08em" 
-                        }}
+                      <button
+                        onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                        className="btn btn-dark ind-details-btn"
+                        style={{ marginTop: "24px" }}
                       >
-                        {brand}
+                        Discuss a project in this sector →
+                      </button>
+                    </div>
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="ind-split-layout">
+              {/* Master Grid (Left side) */}
+              <div className="ind-master-grid">
+                {industries.map((ind, idx) => {
+                  const isSelected = selectedIdx === idx
+                  return (
+                    <div
+                      key={idx}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={isSelected}
+                      aria-label={ind.name}
+                      className={`ind-card ${isSelected ? "is-selected" : ""}`}
+                      onMouseEnter={() => setHoveredIdx(idx)}
+                      onMouseLeave={() => setHoveredIdx(null)}
+                      onClick={() => handleCardClick(idx)}
+                      onKeyDown={(e) => handleCardKeyDown(e, idx)}
+                    >
+                      <div className="ind-icon-wrapper">
+                        {getIcon(ind.key)}
+                      </div>
+                      <span className="ind-title">{ind.name}</span>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Details Panel (Right side) - White Background Image Card */}
+              <div className="ind-details-panel">
+                {/* Image/Gradient header box with centered icon and padding/margin styling */}
+                <div className="ind-details-visual-header">
+                  <span className="ind-details-visual-icon">
+                    {getIcon(industries[activeIdx].key)}
+                  </span>
+                </div>
+
+                <div className="ind-details-content">
+                  <h3>{industries[activeIdx].name}</h3>
+
+                  <div className="ind-details-section">
+                    <p className="ind-details-desc">{industries[activeIdx].info}</p>
+                  </div>
+
+                  <div className="ind-details-section" style={{ marginTop: "20px" }}>
+                    <h4>WHAT WE SHIPPED</h4>
+                    <div style={{ display: "flex", gap: "10px", alignItems: "start", marginTop: "8px" }}>
+                      <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
+                      <span style={{ color: "#27272a", fontSize: "13.5px", lineHeight: "1.5" }}>
+                        {industries[activeIdx].whatWeDid}
                       </span>
-                    ))}
+                    </div>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                  className="btn btn-dark ind-details-btn"
+                >
+                  Discuss a project in this sector →
+                </button>
               </div>
-              
-              <button 
-                onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
-                className="btn btn-dark ind-details-btn"
-              >
-                Discuss a project in this sector →
-              </button>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      {/* Spacer transition: Dark to Light (Black to White) */}
-      <div className="bg-transition-spacer" aria-hidden="true"></div>
-
-      {/* SECTION 2: Light Block - Testimonials */}
-      <section className="section outcomes theme-light-block" style={{ paddingBlock: "96px 48px" }}>
-        <div className="shell">
-          <header className="ind-page-header">
-            <h2 className="display" style={{ color: "var(--light-fg)" }}>Industry leaders have something to say about us</h2>
-          </header>
-
-          {/* Testimonial Cards Grid (6 total cards in 2 rows of 3) */}
-          <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px 32px", background: "none", boxShadow: "none" }}>
-            {/* Card 1 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Evoletrix engineered our HIPAA-compliant portal with absolute precision. Their team integrated directly into our Slack and felt like a true extension of our squad."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Dr. Sarah Jenkins</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>CTO at HealthSync</span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "The FinTech ledger Evoletrix built handles our massive daily volume flawlessly. Outstanding code quality, security compliance, and turnaround speed."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>David Vance</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>VP of Engineering at Trust Pay</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Their custom routing algorithm cut our courier delivery match times in half. The level of transparency we received during development was world-class."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Liam O'Connor</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Director of Logistics at LogiRun</span>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Their retail inventory sync engine handles our 50k SKUs in real-time. Extremely robust build quality and stellar execution."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Marcus Aurelius</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Founder at POSSync</span>
-              </div>
-            </div>
-
-            {/* Card 5 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "Evoletrix built our solar energy telemetry pipeline under a tight timeline. Speed, precision, and absolute technical competence."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Aisha Rahman</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>Head of Infrastructure at SolarGrid</span>
-              </div>
-            </div>
-
-            {/* Card 6 */}
-            <div className="stat" style={{ background: "var(--light-panel)", border: "none", borderRadius: "var(--radius)", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "14px", lineHeight: "1.6", fontStyle: "italic", color: "#44444a" }}>
-                "The offline-first blueprint sync tool is a game-changer for our field operations. Absolute game-changers in developer tooling."
-              </p>
-              <div style={{ marginTop: "20px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "var(--light-fg)" }}>Carlos Mendez</strong>
-                <span style={{ fontSize: "11px", color: "var(--fg-dim)", fontFamily: "var(--font-mono)" }}>CTO at BuildTech</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: Light Block - Global Brands */}
-      <section className="section sdk theme-light-block" style={{ paddingBlock: "48px 96px" }}>
-        <div className="shell">
-          <header className="ind-page-header" style={{ marginBottom: "56px" }}>
-            <h2 className="display" style={{ color: "var(--light-fg)" }}>We serve industries across the globe</h2>
-            <p style={{ color: "var(--fg-dim)", fontSize: "15px", marginTop: "12px" }}>
-              Evoletrix delivers scalable software solutions to leading international brands, tech startups, and enterprise giants alike.
-            </p>
-          </header>
-
-          <div className="logo-strip" style={{ marginTop: "0", display: "grid", gap: "36px" }}>
-            {/* Row 1 of Brands */}
-            <ul style={{ gap: "48px" }}>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>STRIPE</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>AIRBNB</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>UBER</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>REVOLUT</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>SLACK</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>COINBASE</li>
-            </ul>
-            
-            {/* Row 2 of Brands */}
-            <ul style={{ gap: "48px" }}>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>SHOPIFY</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>ZOOM</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>FIGMA</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>VERCEL</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>NOTION</li>
-              <li style={{ color: "#18181b", fontWeight: "700" }}>SPOTIFY</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Spacer transition: Light to Dark (White to Black) */}
-      <div className="bg-transition-spacer-bottom" aria-hidden="true"></div>
     </>
   )
 }

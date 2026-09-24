@@ -307,36 +307,6 @@ ul { list-style: none; padding: 0; }
   margin-top: 42px;
   flex-wrap: wrap;
 }
-.logo-strip {
-  position: relative;
-  z-index: 2;
-  margin-top: 96px;
-  display: grid;
-  gap: 22px;
-  justify-items: center;
-}
-.logo-strip-label {
-  font-size: 11px;
-  color: var(--fg-dim);
-  text-transform: uppercase;
-}
-.logo-strip ul {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(28px, 5vw, 64px);
-}
-.logo-strip li {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: clamp(1.1rem, 2vw, 1.6rem);
-  color: var(--fg-dim);
-  opacity: 0.7;
-  transition: opacity 0.2s, color 0.2s;
-}
-.logo-strip li:hover { opacity: 1; color: var(--fg-muted); }
-
 /* ============================================================
    PANELS (shared card surface)
    ============================================================ */
@@ -1336,30 +1306,6 @@ ul { list-style: none; padding: 0; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
 /* ============================================================
-   SERVICES MOBILE SLIDER
-   ============================================================ */
-.service-mobile-slider {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  margin-top: 24px;
-}
-.service-slide-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: var(--radius);
-  padding: 32px 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-}
-.service-slide-card.slide-in {
-  animation: serviceSlideIn 0.35s forwards cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes serviceSlideIn {
-  from { transform: translateX(24px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
@@ -1703,6 +1649,26 @@ ul { list-style: none; padding: 0; }
   font-weight: 600;
 }
 
+.booking-slot-btn:disabled {
+  color: rgba(255, 255, 255, 0.15);
+  text-decoration: line-through;
+  border-color: transparent;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.booking-slot-btn:disabled:hover {
+  border-color: transparent;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.booking-timezone-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-dim);
+  margin-bottom: 10px;
+}
+
 .booking-slots-placeholder {
   font-size: 13px;
   color: var(--fg-dim);
@@ -1901,7 +1867,12 @@ ul { list-style: none; padding: 0; }
   background: var(--panel-2);
 }
 
-.ind-card.is-active {
+/* Persistent selection (click), fully independent of :hover. Declared
+   after :hover and repeated as .is-selected:hover so a selected card's
+   look always wins even while the pointer is over it — not relying on
+   both rules happening to already agree on every value. */
+.ind-card.is-selected,
+.ind-card.is-selected:hover {
   background: var(--panel-2);
   border-color: #b0c6e5; /* Hero hover active border */
   box-shadow: 0 0 12px rgba(176, 198, 229, 0.25);
@@ -1920,7 +1891,7 @@ ul { list-style: none; padding: 0; }
 }
 
 .ind-card:hover .ind-icon-wrapper,
-.ind-card.is-active .ind-icon-wrapper {
+.ind-card.is-selected .ind-icon-wrapper {
   color: #b0c6e5; /* Hero hover active text highlight */
   transform: scale(1.05);
 }
@@ -1935,8 +1906,13 @@ ul { list-style: none; padding: 0; }
 }
 
 .ind-card:hover .ind-title,
-.ind-card.is-active .ind-title {
+.ind-card.is-selected .ind-title {
   color: var(--fg);
+}
+
+.ind-card:focus-visible {
+  outline: 2px solid #b0c6e5;
+  outline-offset: 2px;
 }
 
 /* Details Panel (Right side) - White Background Image Card */
@@ -2128,5 +2104,898 @@ ul { list-style: none; padding: 0; }
 
 .exp-card:hover .exp-title::after {
   width: 100%; /* Expand underline on hover */
+}
+
+/* ===========================================================
+   Admin dashboard (#admin-login, #admin) — lazy-loaded, reuses
+   the site's existing dark theme tokens and .btn/.form-group
+   primitives rather than introducing a parallel design system.
+   =========================================================== */
+
+.admin-auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  padding: 24px;
+}
+
+.admin-auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-auth-brand {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.admin-sidebar {
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-sidebar-brand {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0 8px;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-nav-item {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin-nav-item:hover {
+  background: var(--panel-2);
+  color: var(--fg);
+}
+
+.admin-nav-item.is-active {
+  background: var(--brand);
+  color: #ffffff;
+}
+
+.admin-sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 8px;
+}
+
+.admin-sidebar-email {
+  font-size: 12px;
+  color: var(--fg-dim);
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+.admin-content {
+  padding: 32px;
+  overflow-x: auto;
+}
+
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 960px;
+}
+
+.admin-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-panel-head h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.admin-panel-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.admin-repeatable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-repeatable-row {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-repeatable-row input {
+  flex: 1;
+}
+
+.admin-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--fg-muted);
+  vertical-align: top;
+}
+
+.admin-table-actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.admin-table-message {
+  max-width: 260px;
+  white-space: pre-wrap;
+}
+
+.admin-row-unread td:first-child {
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+
+.admin-badge {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  background: transparent;
+}
+
+.admin-badge.is-published {
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.admin-badge.is-draft {
+  color: var(--fg-dim);
+}
+
+.admin-filter-row {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-filter-chip {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg-muted);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.admin-filter-chip.is-active {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.admin-empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 13.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  color: var(--fg);
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 720px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .admin-sidebar-footer {
+    margin-top: 0;
+    margin-left: auto;
+    flex-direction: row;
+    align-items: center;
+  }
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Portfolio page — "Our Products" showcase (product switcher) */
+.product-switch-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.product-switch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-switch-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--fg);
+  font: inherit;
+}
+
+.product-switch-item:hover {
+  background: var(--panel);
+}
+
+.product-switch-item.is-selected {
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+.product-switch-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.product-switch-item-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.product-switch-item-tagline {
+  font-size: 12px;
+  color: var(--fg-dim);
+  line-height: 1.4;
+}
+
+.product-preview {
+  animation: productPreviewIn 0.3s var(--ease);
+}
+
+@keyframes productPreviewIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-preview { animation: none; }
+}
+
+/* Browser-window frame — intentionally light/white, mimicking a real
+   browser chrome regardless of the section's dark theme. */
+.browser-frame {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid #e4e4e7;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+}
+
+.browser-frame-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f4f4f5;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.browser-frame-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.browser-frame-dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d4d4d8;
+  font-style: normal;
+}
+
+.browser-frame-url {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #71717a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-frame-body {
+  aspect-ratio: 16 / 10;
+  display: flex;
+}
+
+.browser-frame-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.browser-frame-mockup {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+}
+
+.product-preview-info {
+  margin-top: 28px;
+}
+
+.product-preview-info h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0 0 6px;
+}
+
+.product-preview-tagline {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin: 0 0 20px;
+}
+
+.product-preview-features {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.product-preview-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+}
+
+.product-preview-features li svg {
+  flex-shrink: 0;
+  color: var(--brand);
+}
+
+.product-preview-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.stack-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+@media (max-width: 860px) {
+  .product-switch-layout {
+    grid-template-columns: 1fr;
+  }
+  .product-switch-list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .product-switch-item {
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 92px;
+    gap: 8px;
+    padding: 10px 8px;
+  }
+  .product-switch-item-tagline {
+    display: none;
+  }
+}
+
+/* ===========================================================
+   Header portfolio mega-menu
+   =========================================================== */
+.mega-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mega-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.mega-menu-trigger:hover,
+.mega-menu-trigger.is-active {
+  color: var(--fg);
+}
+
+.mega-menu-trigger.is-active {
+  position: relative;
+}
+
+.mega-menu-trigger.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -22px;
+  height: 2px;
+  background: var(--brand);
+}
+
+.mega-menu-chevron {
+  transition: transform 0.2s var(--ease);
+}
+
+.mega-menu-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  /* Belt-and-suspenders: left/right: 0 already bounds this to the actual
+     viewport (unlike width: 100vw, which can overflow by the scrollbar's
+     width in some browsers), but pin it explicitly too. */
+  max-width: 100%;
+  overflow-x: hidden;
+  z-index: 99;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  animation: megaMenuIn 0.15s var(--ease);
+}
+
+@keyframes megaMenuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mega-menu-inner {
+  padding-block: 32px;
+  display: grid;
+  grid-template-columns: 68% 32%;
+  gap: 32px;
+}
+
+.mega-menu-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 24px;
+}
+
+.mega-menu-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+a.mega-menu-item:hover,
+a.mega-menu-item:focus-visible {
+  background: var(--panel-2);
+}
+
+.mega-menu-item--soon {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.mega-menu-tile {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+}
+
+.mega-menu-tile--sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+
+.mega-menu-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mega-menu-item-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mega-menu-item-external {
+  color: var(--fg-dim);
+  font-size: 12px;
+}
+
+.mega-menu-item-tagline {
+  font-size: 12px;
+  color: var(--fg-dim);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mega-menu-item-badge {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 2px 7px;
+  margin-top: 2px;
+}
+
+.mega-menu-view-all {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--brand);
+  text-decoration: none;
+  padding-left: 12px;
+}
+
+.mega-menu-view-all:hover {
+  text-decoration: underline;
+}
+
+.mega-menu-right {
+  background: color-mix(in srgb, var(--brand) 10%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--brand) 25%, var(--line));
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mega-menu-right h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0;
+}
+
+.mega-menu-right p {
+  font-size: 13px;
+  color: var(--fg-muted);
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+
+.mega-menu-right .btn {
+  align-self: flex-start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu-panel { animation: none; }
+}
+
+@media (max-width: 1080px) {
+  .mega-menu-inner { grid-template-columns: 1fr; }
+  .mega-menu-right { order: -1; }
+}
+
+/* 861-1080px: mega-menu is still the active nav here (the header switches
+   to the hamburger + mobile accordion at 860px and below), but the panel
+   is narrower with the CTA panel stacked above it — give the product grid
+   more breathing room by dropping to a single column too. */
+@media (min-width: 861px) and (max-width: 1080px) {
+  .mega-menu-grid { grid-template-columns: 1fr; }
+}
+
+/* Mobile "Portfolio" accordion (inside .mobile-menu) */
+.mobile-portfolio-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-portfolio-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--fg-muted);
+  cursor: pointer;
+  text-align: left;
+}
+
+.mobile-portfolio-toggle[aria-expanded="true"] {
+  color: var(--fg);
+}
+
+.mobile-portfolio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  padding-left: 4px;
+}
+
+.mobile-portfolio-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  text-decoration: none;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.mobile-portfolio-item--soon {
+  opacity: 0.55;
+}
+
+.mobile-portfolio-viewall {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--brand);
+  text-decoration: none;
+  padding: 10px 0 4px;
+}
+
+/* ===========================================================
+   Mobile inline accordion (Services page + Industries page)
+   =========================================================== */
+.mobile-accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-accordion-panel-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease);
+}
+
+.mobile-accordion-panel-wrapper.is-open {
+  grid-template-rows: 1fr;
+}
+
+.mobile-accordion-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-accordion-panel-wrapper {
+    transition: none;
+  }
+}
+
+.mobile-accordion-trigger {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+}
+
+.mobile-accordion-panel-content {
+  padding: 16px 4px 24px;
+}
+
+/* ===========================================================
+   Home page "Services We Offer" — mobile swipe carousel
+   (native scroll-snap, no library)
+   =========================================================== */
+.services-carousel {
+  margin-top: 24px;
+}
+
+.services-carousel-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.services-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.services-carousel-card {
+  flex: 0 0 85%;
+  scroll-snap-align: start;
+  border: 1px solid var(--light-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--light-panel);
+  display: flex;
+  flex-direction: column;
+}
+
+.services-carousel-card .feature-visual {
+  border-right: none;
+  border-bottom: 1px solid var(--light-line);
+  min-height: 180px;
+}
+
+.services-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #d4d4d8;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s, width 0.2s;
+}
+
+.carousel-dot.is-active {
+  background: var(--light-fg);
+  width: 20px;
+  border-radius: 4px;
 }
 

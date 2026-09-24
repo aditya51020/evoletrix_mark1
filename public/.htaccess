@@ -1,0 +1,46 @@
+DirectoryIndex index.html
+Options -Indexes
+
+# --- Security headers -------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# Block direct access to include-only PHP files (bootstrap.inc.php etc.)
+<FilesMatch "\.inc\.php$">
+  Require all denied
+</FilesMatch>
+
+RewriteEngine On
+
+# --- Canonical host + HTTPS ------------------------------------------
+# Apache/.htaccess only — `php -S` (local dev) never reads this file,
+# so it has zero effect there; it only ever runs on real Hostinger hosting.
+
+# www.evoletrix.com (any scheme) -> https://evoletrix.com, same path+query
+RewriteCond %{HTTP_HOST} ^www\.evoletrix\.com$ [NC]
+RewriteRule ^ https://evoletrix.com%{REQUEST_URI} [L,R=301,QSA]
+
+# Any remaining plain-HTTP request -> HTTPS, same host/path/query
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,QSA]
+
+# Block direct access to the PHPMailer vendor lib
+RewriteRule ^api/lib/ - [F,L]
+
+# Serve real files and directories as-is (this lets /api/*.php through
+# untouched, since those are real files on disk)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Any /api/ path that didn't match a real file above is a dead endpoint —
+# return a real 404, never the SPA shell. Without this, a typo'd or
+# retired API URL would get a 200 + the HTML app body, which silently
+# breaks any fetch() expecting JSON instead of failing loudly.
+RewriteRule ^api/ - [R=404,L]
+
+# Everything else falls back to the SPA shell
+RewriteRule ^ index.html [L]

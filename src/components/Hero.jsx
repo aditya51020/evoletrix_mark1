@@ -206,17 +206,6 @@ export default function Hero() {
           <button onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))} className="btn btn-solid btn-lg">Let's chat over coffee →</button>
         </div>
       </div>
-
-      <div className="shell logo-strip reveal" aria-label="Engineers trusted by teams at">
-        <span className="logo-strip-label">Engineers trusted by teams at</span>
-        <ul>
-          <li>Aima</li>
-          <li>Data Soft</li>
-          <li>Geotech</li>
-          <li>Medlink</li>
-          <li>Solana</li>
-        </ul>
-      </div>
     </section>
   )
 }

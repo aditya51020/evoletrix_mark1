@@ -14,11 +14,11 @@ export default function Footer() {
         </div>
         <nav className="footer-col" aria-label="Services">
           <h4>Services</h4>
-          <a href="#services">Web applications</a>
-          <a href="#services">Native iOS apps</a>
-          <a href="#services">AI &amp; LLM systems</a>
-          <a href="#services">Blockchain platforms</a>
-          <a href="#services">Custom ERP software</a>
+          <a href="#services-page">Web applications</a>
+          <a href="#services-page">Native iOS apps</a>
+          <a href="#services-page">AI &amp; LLM systems</a>
+          <a href="#services-page">Blockchain platforms</a>
+          <a href="#services-page">Custom ERP software</a>
         </nav>
         <nav className="footer-col" aria-label="Industries">
           <h4>Industries</h4>
