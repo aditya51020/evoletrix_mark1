@@ -142,9 +142,10 @@ export default function Header() {
                           <ItemTag
                             key={prod.key}
                             className={`mega-menu-item ${hasUrl ? "" : "mega-menu-item--soon"}`}
+                            style={{ background: prod.accent }}
                             {...itemProps}
                           >
-                            <span className="mega-menu-tile" style={{ background: prod.accent }} aria-hidden="true">
+                            <span className="mega-menu-tile" aria-hidden="true">
                               <ProductIcon name={prod.icon} width={22} height={22} />
                             </span>
                             <span className="mega-menu-item-text">

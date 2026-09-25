@@ -2932,30 +2932,31 @@ ul { list-style: none; padding: 0; }
 
 .mega-menu-panel {
   position: fixed;
-  top: var(--header-h);
-  left: 0;
-  right: 0;
-  /* Belt-and-suspenders: left/right: 0 already bounds this to the actual
-     viewport (unlike width: 100vw, which can overflow by the scrollbar's
-     width in some browsers), but pin it explicitly too. */
-  max-width: 100%;
-  overflow-x: hidden;
+  top: calc(var(--header-h) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  /* Explicit width (not left/right: 0) both narrows the panel off the
+     viewport edges and — since it's a fixed length, not 100vw — sidesteps
+     the scrollbar-width overflow some browsers have with 100vw. */
+  width: min(1100px, calc(100% - 48px));
   z-index: 99;
   background: #ffffff;
-  border-bottom: 1px solid #e4e4e7;
+  border-radius: 20px;
+  overflow: hidden;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
   animation: megaMenuIn 0.15s var(--ease);
 }
 
 @keyframes megaMenuIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .mega-menu-inner {
   padding-block: 32px;
   display: grid;
   grid-template-columns: 68% 32%;
+  align-items: stretch;
   gap: 32px;
 }
 
@@ -2968,23 +2969,24 @@ ul { list-style: none; padding: 0; }
 .mega-menu-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px 24px;
+  gap: 14px 16px;
 }
 
 .mega-menu-item {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 12px;
-  border-radius: var(--radius-sm);
+  padding: 16px;
+  border-radius: 14px;
   text-decoration: none;
-  color: inherit;
-  transition: background 0.15s;
+  color: #ffffff;
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
 
 a.mega-menu-item:hover,
 a.mega-menu-item:focus-visible {
-  background: #f4f4f5;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
 .mega-menu-item--soon {
@@ -3000,6 +3002,15 @@ a.mega-menu-item:focus-visible {
   display: grid;
   place-items: center;
   color: #ffffff;
+}
+
+/* Desktop mega-menu cards carry the product's own accent as their card
+   background now (inline style, see Header.jsx), so the icon tile switches
+   to a translucent white chip for contrast instead of repeating that same
+   color — leaving the standalone .mega-menu-tile (mobile portfolio list,
+   colored per-product) untouched. */
+.mega-menu-item .mega-menu-tile {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .mega-menu-tile--sm {
@@ -3018,20 +3029,20 @@ a.mega-menu-item:focus-visible {
 .mega-menu-item-name {
   font-size: 13.5px;
   font-weight: 600;
-  color: #18181b;
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .mega-menu-item-external {
-  color: #71717a;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 12px;
 }
 
 .mega-menu-item-tagline {
   font-size: 12px;
-  color: #71717a;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -3045,18 +3056,18 @@ a.mega-menu-item:focus-visible {
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #71717a;
-  border: 1px solid #e4e4e7;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   padding: 2px 7px;
   margin-top: 2px;
 }
 
-.mega-menu-view-all {
+.mega-menu-panel .mega-menu-view-all {
   align-self: flex-start;
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--brand);
+  color: #18181b;
   text-decoration: none;
   padding-left: 12px;
 }
@@ -3068,9 +3079,10 @@ a.mega-menu-item:focus-visible {
 .mega-menu-right {
   position: relative;
   overflow: hidden;
-  background: color-mix(in srgb, var(--brand) 6%, #ffffff);
-  border: 1px solid color-mix(in srgb, var(--brand) 25%, #e4e4e7);
+  height: 100%;
+  background: #ffffff;
   border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   padding: 24px;
   display: flex;
   flex-direction: column;
