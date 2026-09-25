@@ -26,9 +26,6 @@ export default function PortfolioPage() {
 
   const selectedProduct = products[selectedIdx]
   const hasSelectedUrl = Boolean(selectedProduct.url && selectedProduct.url.trim())
-  const displayUrl = hasSelectedUrl
-    ? selectedProduct.url.replace(/^https?:\/\//, "")
-    : `${selectedProduct.key}.evoletrix.com`
 
   const handleListKeyDown = (e) => {
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
@@ -65,9 +62,10 @@ export default function PortfolioPage() {
                     aria-selected={isSelected}
                     tabIndex={isSelected ? 0 : -1}
                     className={`product-switch-item ${isSelected ? "is-selected" : ""}`}
+                    style={{ background: prod.accent }}
                     onClick={() => setSelectedIdx(idx)}
                   >
-                    <span className="mega-menu-tile" style={{ background: prod.accent }} aria-hidden="true">
+                    <span className="mega-menu-tile" aria-hidden="true">
                       <ProductIcon name={prod.icon} width={22} height={22} />
                     </span>
                     <span className="product-switch-item-text">
@@ -79,47 +77,46 @@ export default function PortfolioPage() {
               })}
             </div>
 
-            <div className="product-preview" key={selectedIdx}>
-              <div className="browser-frame">
-                <div className="browser-frame-bar">
-                  <span className="browser-frame-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                  <span className="browser-frame-url">{displayUrl}</span>
-                </div>
-                <div className="browser-frame-body">
-                  {selectedProduct.image ? (
-                    <img src={selectedProduct.image} alt={`${selectedProduct.name} screenshot`} className="browser-frame-image" />
-                  ) : (
-                    <AbstractUIMockup accent={selectedProduct.accent} />
-                  )}
+            <div className="product-preview" key={selectedIdx} style={{ background: selectedProduct.accent }}>
+              <div className="product-preview-header">
+                <span className="product-preview-icon-tile" aria-hidden="true">
+                  <ProductIcon name={selectedProduct.icon} width={28} height={28} />
+                </span>
+                <div>
+                  <h3>{selectedProduct.name}</h3>
+                  <p className="product-preview-tagline">{selectedProduct.tagline}</p>
                 </div>
               </div>
 
-              <div className="product-preview-info">
-                <h3>{selectedProduct.name}</h3>
-                <p className="product-preview-tagline">{selectedProduct.tagline}</p>
+              <ul className="product-preview-features">
+                {selectedProduct.features.map((f, i) => (
+                  <li key={i}><CheckIcon /> {f}</li>
+                ))}
+              </ul>
 
-                <ul className="product-preview-features">
-                  {selectedProduct.features.map((f, i) => (
-                    <li key={i}><CheckIcon /> {f}</li>
+              {selectedProduct.stack.length > 0 && (
+                <div className="product-preview-stack">
+                  {selectedProduct.stack.map((s, i) => (
+                    <span key={i} className="stack-chip">{s}</span>
                   ))}
-                </ul>
+                </div>
+              )}
 
-                {selectedProduct.stack.length > 0 && (
-                  <div className="product-preview-stack">
-                    {selectedProduct.stack.map((s, i) => (
-                      <span key={i} className="stack-chip">{s}</span>
-                    ))}
-                  </div>
-                )}
-
-                {hasSelectedUrl ? (
-                  <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-solid">
-                    Visit live ↗
-                  </a>
+              <div className="product-preview-visual">
+                {selectedProduct.image ? (
+                  <img src={selectedProduct.image} alt={`${selectedProduct.name} screenshot`} className="browser-frame-image" />
                 ) : (
-                  <button className="btn btn-solid" disabled>Coming soon</button>
+                  <AbstractUIMockup accent={selectedProduct.accent} />
                 )}
               </div>
+
+              {hasSelectedUrl ? (
+                <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-solid product-preview-cta">
+                  Visit live ↗
+                </a>
+              ) : (
+                <button className="btn btn-solid product-preview-cta" disabled>Coming soon</button>
+              )}
             </div>
           </div>
         </div>
