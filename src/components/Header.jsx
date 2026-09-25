@@ -165,11 +165,12 @@ export default function Header() {
                   </div>
 
                   <div className="mega-menu-right">
+                    <div className="mega-menu-right-pattern" aria-hidden="true"></div>
                     <h4>Have a product idea?</h4>
                     <p>Tell us what you're building and we'll help you scope it, design it, and ship it.</p>
                     <button
                       type="button"
-                      className="btn btn-solid"
+                      className="btn btn-dark"
                       onClick={() => {
                         closePortfolioMenu(true)
                         window.dispatchEvent(new CustomEvent("open-booking"))

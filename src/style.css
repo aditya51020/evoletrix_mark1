@@ -2941,9 +2941,9 @@ ul { list-style: none; padding: 0; }
   max-width: 100%;
   overflow-x: hidden;
   z-index: 99;
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  background: #ffffff;
+  border-bottom: 1px solid #e4e4e7;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
   animation: megaMenuIn 0.15s var(--ease);
 }
 
@@ -2984,7 +2984,7 @@ ul { list-style: none; padding: 0; }
 
 a.mega-menu-item:hover,
 a.mega-menu-item:focus-visible {
-  background: var(--panel-2);
+  background: #f4f4f5;
 }
 
 .mega-menu-item--soon {
@@ -3018,20 +3018,20 @@ a.mega-menu-item:focus-visible {
 .mega-menu-item-name {
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--fg);
+  color: #18181b;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .mega-menu-item-external {
-  color: var(--fg-dim);
+  color: #71717a;
   font-size: 12px;
 }
 
 .mega-menu-item-tagline {
   font-size: 12px;
-  color: var(--fg-dim);
+  color: #71717a;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -3045,8 +3045,8 @@ a.mega-menu-item:focus-visible {
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--fg-dim);
-  border: 1px solid var(--line);
+  color: #71717a;
+  border: 1px solid #e4e4e7;
   border-radius: 10px;
   padding: 2px 7px;
   margin-top: 2px;
@@ -3066,8 +3066,10 @@ a.mega-menu-item:focus-visible {
 }
 
 .mega-menu-right {
-  background: color-mix(in srgb, var(--brand) 10%, var(--panel));
-  border: 1px solid color-mix(in srgb, var(--brand) 25%, var(--line));
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--brand) 6%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--brand) 25%, #e4e4e7);
   border-radius: var(--radius);
   padding: 24px;
   display: flex;
@@ -3076,16 +3078,32 @@ a.mega-menu-item:focus-visible {
   justify-content: center;
 }
 
+.mega-menu-right-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image: radial-gradient(color-mix(in srgb, var(--brand) 35%, transparent) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(circle at 100% 0%, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.mega-menu-right > *:not(.mega-menu-right-pattern) {
+  position: relative;
+  z-index: 1;
+}
+
 .mega-menu-right h4 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--fg);
+  color: #18181b;
   margin: 0;
 }
 
 .mega-menu-right p {
   font-size: 13px;
-  color: var(--fg-muted);
+  color: #52525b;
   line-height: 1.6;
   margin: 0 0 8px;
 }

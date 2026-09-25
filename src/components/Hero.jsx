@@ -255,7 +255,7 @@ export default function Hero() {
           Your vision,<br />engineered to scale
         </h1>
         <p className="hero-sub reveal">
-          Custom web, iOS, AI, and GIS software engineered for ambitious teams.
+          Next-gen Web, On-Prem LLM, and Data Center solutions engineered by experts to shape the future of your business.
         </p>
         <div className="hero-actions reveal">
           <button onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))} className="btn btn-solid btn-lg">Let's chat over coffee →</button>
