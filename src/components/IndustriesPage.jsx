@@ -1,10 +1,11 @@
 import React, { useState } from "react"
 import useIsMobile from "../hooks/useIsMobile"
-import MobileAccordionCard from "./MobileAccordionCard"
 
 export default function IndustriesPage() {
   const isMobile = useIsMobile()
-  const [mobileOpenIdx, setMobileOpenIdx] = useState(null)
+  // Mobile only: which card (if any) is expanded in place over its
+  // neighbors. Desktop uses selectedIdx/the split layout instead.
+  const [mobileExpandedIdx, setMobileExpandedIdx] = useState(null)
 
   const [hoveredIdx, setHoveredIdx] = useState(null)
   const [clickedIdx, setClickedIdx] = useState(0) // Default to first industry (Healthcare)
@@ -123,49 +124,79 @@ export default function IndustriesPage() {
           </header>
 
           {isMobile ? (
-            /* Mobile: inline accordion — tapping a card expands its info
-               directly below it, one open at a time. */
-            <div className="mobile-accordion-list">
-              {industries.map((ind, idx) => (
-                <MobileAccordionCard
-                  key={idx}
-                  id={`industry-${idx}`}
-                  isOpen={mobileOpenIdx === idx}
-                  onToggle={() => setMobileOpenIdx((prev) => (prev === idx ? null : idx))}
-                  triggerClassName={`ind-card mobile-accordion-trigger ${mobileOpenIdx === idx ? "is-selected" : ""}`}
-                  triggerContent={
-                    <>
-                      <div className="ind-icon-wrapper">
-                        {getIcon(ind.key)}
-                      </div>
-                      <span className="ind-title">{ind.name}</span>
-                    </>
-                  }
-                  panelContent={
-                    <div className="mobile-accordion-panel-content">
-                      <p className="ind-details-desc">{ind.info}</p>
+            /* Mobile: a 2-column grid of small square cards. Tapping one
+               grows it in place — anchored at its own top-left corner so
+               it expands down-and-right (or down-and-left for the right
+               column, so it never runs off the edge of the screen) to
+               cover its neighbors and reveal the details inside. Tapping
+               its header, or the dimmed backdrop, collapses it again. */
+            <div className="ind-mobile-wrap">
+              <div
+                className={`ind-mobile-tap-catcher ${mobileExpandedIdx !== null ? "is-visible" : ""}`}
+                onClick={() => setMobileExpandedIdx(null)}
+                aria-hidden="true"
+              />
+              <div className="ind-mobile-grid">
+                {industries.map((ind, idx) => {
+                  const isExpanded = mobileExpandedIdx === idx
+                  return (
+                    <div
+                      key={idx}
+                      className={`ind-mobile-card ${isExpanded ? "is-expanded" : ""} ${idx % 2 === 1 ? "anchor-right" : "anchor-left"}`}
+                    >
+                      <button
+                        type="button"
+                        className="ind-mobile-card-face"
+                        aria-expanded={isExpanded}
+                        aria-label={ind.name}
+                        onClick={() => setMobileExpandedIdx(idx)}
+                      >
+                        <div className="ind-icon-wrapper">
+                          {getIcon(ind.key)}
+                        </div>
+                        <span className="ind-title">{ind.name}</span>
+                      </button>
 
-                      <div style={{ marginTop: "16px" }}>
-                        <h4>WHAT WE SHIPPED</h4>
-                        <div style={{ display: "flex", gap: "10px", alignItems: "start", marginTop: "8px" }}>
-                          <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
-                          <span style={{ color: "#27272a", fontSize: "13.5px", lineHeight: "1.5" }}>
-                            {ind.whatWeDid}
-                          </span>
+                      <div className="ind-mobile-expand-panel">
+                        <button
+                          type="button"
+                          className="ind-mobile-expand-header"
+                          onClick={() => setMobileExpandedIdx(null)}
+                          aria-label={`Close ${ind.name} details`}
+                        >
+                          <div className="ind-icon-wrapper">
+                            {getIcon(ind.key)}
+                          </div>
+                          <span className="ind-title">{ind.name}</span>
+                          <span className="ind-mobile-expand-close" aria-hidden="true">✕</span>
+                        </button>
+
+                        <div className="ind-mobile-expand-body">
+                          <p className="ind-details-desc">{ind.info}</p>
+
+                          <div className="ind-details-section" style={{ marginTop: "16px" }}>
+                            <h4>WHAT WE SHIPPED</h4>
+                            <div style={{ display: "flex", gap: "10px", alignItems: "start", marginTop: "8px" }}>
+                              <span style={{ color: "var(--brand)", fontWeight: "bold", fontSize: "15px" }}>|</span>
+                              <span style={{ color: "#27272a", fontSize: "13.5px", lineHeight: "1.5" }}>
+                                {ind.whatWeDid}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                            className="btn btn-dark ind-details-btn"
+                            style={{ marginTop: "24px" }}
+                          >
+                            Discuss a project in this sector →
+                          </button>
                         </div>
                       </div>
-
-                      <button
-                        onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
-                        className="btn btn-dark ind-details-btn"
-                        style={{ marginTop: "24px" }}
-                      >
-                        Discuss a project in this sector →
-                      </button>
                     </div>
-                  }
-                />
-              ))}
+                  )
+                })}
+              </div>
             </div>
           ) : (
             <div className="ind-split-layout">

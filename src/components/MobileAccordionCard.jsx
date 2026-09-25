@@ -2,8 +2,8 @@ import React, { useRef } from "react"
 
 // Generic inline accordion: a trigger button followed by a smoothly
 // height-animated panel directly beneath it (CSS grid-template-rows
-// 0fr->1fr trick, no JS height measurement needed). Used by both
-// ServicesPage.jsx and IndustriesPage.jsx for the mobile card layout.
+// 0fr->1fr trick, no JS height measurement needed). Used by
+// ServicesPage.jsx for the mobile card layout.
 export default function MobileAccordionCard({ id, isOpen, onToggle, triggerClassName, triggerContent, panelContent }) {
   const cardRef = useRef(null)
 

@@ -2045,6 +2045,155 @@ ul { list-style: none; padding: 0; }
   transform: translateY(-1px);
 }
 
+/* ============================================================
+   INDUSTRIES — mobile grid with in-place expanding cards
+   (small square cards; tapping one grows it over its neighbors,
+   anchored at its own top-left corner, to reveal details inside)
+   ============================================================ */
+.ind-mobile-wrap {
+  position: relative;
+}
+
+.ind-mobile-tap-catcher {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 12, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+  z-index: 190;
+}
+
+.ind-mobile-tap-catcher.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ind-mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ind-mobile-card {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.ind-mobile-card.is-expanded {
+  z-index: 200;
+}
+
+.ind-mobile-card-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s var(--ease);
+}
+
+.ind-mobile-card-face .ind-icon-wrapper {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 0;
+}
+
+.ind-mobile-card-face .ind-title {
+  font-size: 10.5px;
+}
+
+.ind-mobile-card.is-expanded .ind-mobile-card-face {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ind-mobile-expand-panel {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.4s cubic-bezier(0.22, 0.8, 0.24, 1), height 0.4s cubic-bezier(0.22, 0.8, 0.24, 1), opacity 0.25s var(--ease), box-shadow 0.3s var(--ease);
+}
+
+.ind-mobile-card.anchor-left .ind-mobile-expand-panel { left: 0; }
+.ind-mobile-card.anchor-right .ind-mobile-expand-panel { right: 0; }
+
+.ind-mobile-card.is-expanded .ind-mobile-expand-panel {
+  width: 214%;
+  height: 320%;
+  opacity: 1;
+  pointer-events: auto;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.ind-mobile-expand-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ind-mobile-expand-header .ind-icon-wrapper {
+  margin-bottom: 0;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--brand);
+}
+
+.ind-mobile-expand-header .ind-title {
+  flex: 1;
+  text-align: left;
+  color: #18181b;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.ind-mobile-expand-close {
+  font-size: 15px;
+  color: #71717a;
+  line-height: 1;
+}
+
+.ind-mobile-expand-body {
+  padding: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ind-mobile-expand-panel {
+    transition: none;
+  }
+}
+
+/* Trims the page's mobile-only padding so the grid's first two rows
+   (>= 4 cards) land inside the initial viewport without scrolling. */
+@media (max-width: 860px) {
+  .industries-page-section {
+    padding-block: 56px 40px !important;
+  }
+}
+
 /* Tablet view */
 @media (max-width: 900px) {
   .ind-split-layout {
@@ -2930,7 +3079,7 @@ a.mega-menu-item:focus-visible {
 }
 
 /* ===========================================================
-   Mobile inline accordion (Services page + Industries page)
+   Mobile inline accordion (Services page)
    =========================================================== */
 .mobile-accordion-list {
   display: flex;
@@ -2965,8 +3114,29 @@ a.mega-menu-item:focus-visible {
   font: inherit;
 }
 
+/* Services page reuses .ind-card as its trigger, which defaults to a
+   near-square card (aspect-ratio 1.1) for the desktop grid — stretched
+   full-width in this single-column mobile list that becomes an oversized
+   box. Flattened into a short rectangle instead, so at least 3 rows fit
+   in one screen. */
+.mobile-accordion-trigger.ind-card {
+  aspect-ratio: auto;
+  min-height: 60px;
+  padding: 14px 16px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* The panel content's text colors (#27272a desc, #44444a bullets, etc.)
+   are dark-on-white, matching the desktop details panel's white
+   background — needed here too, since the page itself is dark-themed
+   and those colors are close to unreadable directly on it. */
 .mobile-accordion-panel-content {
-  padding: 16px 4px 24px;
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  padding: 20px 18px 24px;
+  margin-top: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* ===========================================================
