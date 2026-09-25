@@ -44,7 +44,7 @@ export default function Footer() {
       <div className="shell footer-bottom">
         <div className="footer-social" aria-label="Social links">
           <a href="#top" aria-label="X">X</a>
-          <a href="#top" aria-label="LinkedIn">in</a>
+          <a href="https://www.linkedin.com/company/evoletrix-private-limited/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">in</a>
           <a href="#top" aria-label="GitHub">GH</a>
           <a href="#top" aria-label="Discord">Dc</a>
         </div>

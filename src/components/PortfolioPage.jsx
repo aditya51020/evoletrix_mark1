@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react"
 import { products } from "../data/products"
 import ProductIcon from "./ProductIcon"
+import AbstractUIMockup from "./AbstractUIMockup"
 
 // Set true to force the "Our Products" section to render locally for
 // review, even if no product has a url yet. Must be false in production.
@@ -88,9 +89,7 @@ export default function PortfolioPage() {
                   {selectedProduct.image ? (
                     <img src={selectedProduct.image} alt={`${selectedProduct.name} screenshot`} className="browser-frame-image" />
                   ) : (
-                    <div className="browser-frame-mockup" style={{ background: selectedProduct.accent }}>
-                      <ProductIcon name={selectedProduct.icon} width={56} height={56} />
-                    </div>
+                    <AbstractUIMockup accent={selectedProduct.accent} />
                   )}
                 </div>
               </div>

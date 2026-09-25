@@ -34,8 +34,8 @@ export default function ServicesPage() {
         return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       case "transformation":
         return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 10h-.01M17 14h.01M13 18h.01M12 6h.01"/><path d="M22 12a10 10 0 1 1-10-10c.85 0 1.67.1 2.47.3"/></svg>
-      case "consulting":
-        return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      case "datacenter":
+        return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
       case "data":
         return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
       default:
@@ -60,6 +60,20 @@ export default function ServicesPage() {
     },
     {
       num: "02",
+      key: "datacenter",
+      title: "Data Center Services",
+      desc: "We design, build, and operate enterprise data centers from the ground up, covering network fabric, high-speed interconnects, and day-to-day operations for mission-critical infrastructure.",
+      points: [
+        "Data Center Build, Implementation & Operations",
+        "Greenfield Design — Built From the Ground Up",
+        "VxLAN Network Fabric",
+        "InfiniBand High-Speed Interconnects",
+        "SD-WAN & Firewall Deployment",
+        "Network Automation"
+      ]
+    },
+    {
+      num: "03",
       key: "outsourcing",
       title: "IT Managed & Outsourcing",
       desc: "Hire dedicated development squads or choose structured milestone-driven execution for your critical engineering backlogs.",
@@ -71,7 +85,7 @@ export default function ServicesPage() {
       ]
     },
     {
-      num: "03",
+      num: "04",
       key: "transformation",
       title: "Digital Transformation",
       desc: "Modernize legacy systems, migrate to fast cloud hosting, and integrate advanced smart contracts securely.",
@@ -82,18 +96,6 @@ export default function ServicesPage() {
         "Cybersecurity Auditing & Hardening",
         "IoT Telemetry Integrations",
         "AR/VR Interactive Applications"
-      ]
-    },
-    {
-      num: "04",
-      key: "consulting",
-      title: "Consulting Services",
-      desc: "Engage senior software architects on a flexible hourly consulting basis to resolve complex blockers.",
-      points: [
-        "Strategic IT Consulting",
-        "Database Architecture Auditing",
-        "FinTech Compliance Consulting",
-        "Mobile App Store Optimization"
       ]
     },
     {

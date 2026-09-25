@@ -58,7 +58,12 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
   is_read      TINYINT(1) NOT NULL DEFAULT 0,
   created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY idx_submissions_type (type),
-  KEY idx_submissions_read (is_read)
+  KEY idx_submissions_read (is_read),
+  -- Prevents two people from booking the same slot, even under concurrent
+  -- requests (enforced atomically by MySQL, not a check-then-insert in
+  -- PHP). 'contact' rows have both columns NULL, and MySQL never treats
+  -- NULL as equal to NULL in a unique index, so they never collide here.
+  UNIQUE KEY uniq_booking_slot (booking_date, booking_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Generic per-IP, per-endpoint sliding-window rate limiter.

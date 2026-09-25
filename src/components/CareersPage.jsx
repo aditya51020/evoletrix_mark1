@@ -612,7 +612,7 @@ export default function CareersPage() {
                         value={applyName}
                         onChange={(e) => setApplyName(e.target.value)}
                         disabled={applyStatus === "loading"}
-                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", background: "#ffffff", fontSize: "13.5px", color: "#18181b" }}
                       />
                     </div>
                     <div className="form-group">
@@ -624,7 +624,7 @@ export default function CareersPage() {
                         value={applyEmail}
                         onChange={(e) => setApplyEmail(e.target.value)}
                         disabled={applyStatus === "loading"}
-                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", background: "#ffffff", fontSize: "13.5px", color: "#18181b" }}
                       />
                     </div>
                     <div className="form-group">
@@ -635,7 +635,7 @@ export default function CareersPage() {
                         value={applyPhone}
                         onChange={(e) => setApplyPhone(e.target.value)}
                         disabled={applyStatus === "loading"}
-                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b" }}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", background: "#ffffff", fontSize: "13.5px", color: "#18181b" }}
                       />
                     </div>
                     <div className="form-group">
@@ -647,7 +647,7 @@ export default function CareersPage() {
                         value={applyCoverNote}
                         onChange={(e) => setApplyCoverNote(e.target.value)}
                         disabled={applyStatus === "loading"}
-                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", fontSize: "13.5px", color: "#18181b", resize: "vertical" }}
+                        style={{ padding: "12px 14px", borderRadius: "6px", border: "1px solid #e4e4e7", background: "#ffffff", fontSize: "13.5px", color: "#18181b", resize: "vertical" }}
                       />
                     </div>
                     <div className="form-group">
@@ -659,7 +659,7 @@ export default function CareersPage() {
                         required
                         onChange={handleResumeChange}
                         disabled={applyStatus === "loading"}
-                        style={{ fontSize: "13px", color: "#18181b" }}
+                        style={{ fontSize: "13px", color: "#18181b", background: "#ffffff" }}
                       />
                     </div>
 

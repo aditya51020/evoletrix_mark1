@@ -11,9 +11,9 @@ export default function WhySection() {
 
   const tabs = [
     { num: "01", name: "PRODUCT ENG." },
-    { num: "02", name: "IT OUTSOURCING" },
-    { num: "03", name: "DIGITAL TRANS." },
-    { num: "04", name: "CONSULTING" },
+    { num: "02", name: "DATA CENTER" },
+    { num: "03", name: "IT OUTSOURCING" },
+    { num: "04", name: "DIGITAL TRANS." },
     { num: "05", name: "DATA SERVICES" }
   ]
 
@@ -44,13 +44,37 @@ export default function WhySection() {
     },
     {
       visual: (
+        <div className="feature-visual" data-grad="1">
+          <div className="visual-terminal">
+            <span className="vt-head">DATA CENTER FABRIC <em>● provisioning</em></span>
+          </div>
+        </div>
+      ),
+      copy: (
+        <div className="feature-copy">
+          <span className="ft-index">02</span>
+          <h3>Data Center Services</h3>
+          <p>We design, build, and operate enterprise data centers from the ground up, covering network fabric, high-speed interconnects, and day-to-day operations for mission-critical infrastructure.</p>
+          <ul className="ticks">
+            <li>Build, Implementation &amp; Operations</li>
+            <li>Greenfield Design — Built From the Ground Up</li>
+            <li>VxLAN Network Fabric</li>
+            <li>InfiniBand High-Speed Interconnects</li>
+            <li>SD-WAN &amp; Firewall Deployment</li>
+            <li>Network Automation</li>
+          </ul>
+        </div>
+      )
+    },
+    {
+      visual: (
         <div className="feature-visual" data-grad="2">
           <div className="visual-block"></div>
         </div>
       ),
       copy: (
         <div className="feature-copy">
-          <span className="ft-index">02</span>
+          <span className="ft-index">03</span>
           <h3>IT Managed &amp; Outsourcing</h3>
           <p>Ensure business continuity, secure storage, and top-tier compliance protocols for all your systems.</p>
           <ul className="ticks">
@@ -71,7 +95,7 @@ export default function WhySection() {
       ),
       copy: (
         <div className="feature-copy">
-          <span className="ft-index">03</span>
+          <span className="ft-index">04</span>
           <h3>Digital Transformation</h3>
           <p>Upgrade outdated workflows into cloud-native architectures that utilize the power of blockchain, AI, and IoT.</p>
           <ul className="ticks">
@@ -81,26 +105,6 @@ export default function WhySection() {
             <li>Cybersecurity</li>
             <li>IoT</li>
             <li>AR/VR</li>
-          </ul>
-        </div>
-      )
-    },
-    {
-      visual: (
-        <div className="feature-visual" data-grad="1">
-          <div className="visual-search">⌕ consulting… <span>IT · Software · FinTech</span></div>
-        </div>
-      ),
-      copy: (
-        <div className="feature-copy">
-          <span className="ft-index">04</span>
-          <h3>Consulting Services</h3>
-          <p>Receive strategic roadmap directions, architectural planning, and technology evaluations from experts.</p>
-          <ul className="ticks">
-            <li>IT Consulting</li>
-            <li>Software Consulting</li>
-            <li>FinTech Consulting</li>
-            <li>Mobile Consulting</li>
           </ul>
         </div>
       )

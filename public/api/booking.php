@@ -86,13 +86,22 @@ $stmt = $pdo->prepare(
     "INSERT INTO contact_submissions (type, name, email, message, booking_date, booking_time, created_at)
      VALUES ('booking', :name, :email, :message, :booking_date, :booking_time, NOW())"
 );
-$stmt->execute([
-    'name' => $name,
-    'email' => $email,
-    'message' => $message !== '' ? $message : null,
-    'booking_date' => $dateRaw,
-    'booking_time' => $timeRaw,
-]);
+try {
+    $stmt->execute([
+        'name' => $name,
+        'email' => $email,
+        'message' => $message !== '' ? $message : null,
+        'booking_date' => $dateRaw,
+        'booking_time' => $timeRaw,
+    ]);
+} catch (PDOException $e) {
+    // 1062 = MySQL duplicate-entry, from uniq_booking_slot — someone else
+    // already took this exact date+time between page load and submit.
+    if ((int) $e->errorInfo[1] === 1062) {
+        json_error('This time slot is no longer available. Please choose another time.', 409);
+    }
+    throw $e;
+}
 
 $body = '<h2>New consultation booking request</h2>'
     . '<p><strong>Name:</strong> ' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</p>'

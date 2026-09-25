@@ -65,6 +65,38 @@ export default function App() {
     return () => window.removeEventListener("hashchange", handleHash)
   }, [])
 
+  // Blocks copying/right-clicking page content on the public site, to make
+  // casual content scraping a bit harder. Form fields are exempt (target
+  // check below) so filling out the contact/booking/apply forms still
+  // works normally. Never runs on the admin dashboard — the team needs to
+  // copy applicant emails, cover notes, etc. from there.
+  //
+  // Not real protection: view-source, disabling JS, or just reading the
+  // rendered page still exposes everything. It only deters casual
+  // right-click-and-copy, which is what was asked for.
+  useEffect(() => {
+    if (view === "admin") return
+
+    const isFormField = (target) =>
+      target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement
+
+    const blockUnlessFormField = (e) => {
+      if (!isFormField(e.target)) e.preventDefault()
+    }
+
+    document.addEventListener("copy", blockUnlessFormField)
+    document.addEventListener("cut", blockUnlessFormField)
+    document.addEventListener("contextmenu", blockUnlessFormField)
+    document.body.classList.add("no-select")
+
+    return () => {
+      document.removeEventListener("copy", blockUnlessFormField)
+      document.removeEventListener("cut", blockUnlessFormField)
+      document.removeEventListener("contextmenu", blockUnlessFormField)
+      document.body.classList.remove("no-select")
+    }
+  }, [view])
+
   // Reveals ".reveal" elements as they scroll into view. Route pages are
   // React.lazy + Suspense, so their content can mount asynchronously *after*
   // a "view changed" effect would have already run and found nothing to
