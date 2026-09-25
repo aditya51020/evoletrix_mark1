@@ -17,6 +17,7 @@ export const products = [
     desc: "A geospatial mapping platform for visualizing, editing, and analyzing location-based data. Built for teams that need custom map layers, geofencing, and spatial queries beyond off-the-shelf map tools.",
     url: "https://gis-map-application.evoletrix.com",
     accent: "linear-gradient(135deg, #0ea5e9, #0369a1)",
+    color: "#0ea5e9",
     icon: "map",
     image: "",
     // TODO: verify with team
@@ -36,6 +37,7 @@ export const products = [
     desc: "A centralized system for storing, organizing, and retrieving organizational records with role-based access control. Built for teams that need structured document workflows and audit trails.",
     url: "https://record-management-system.evoletrix.com",
     accent: "linear-gradient(135deg, #64748b, #334155)",
+    color: "#64748b",
     icon: "folder",
     image: "",
     // TODO: verify with team
@@ -55,6 +57,7 @@ export const products = [
     desc: "An administrative platform covering admissions, course scheduling, attendance, and academic records. Built for universities and colleges coordinating operations across multiple departments.",
     url: "https://university-management-system.evoletrix.com",
     accent: "linear-gradient(135deg, #eab308, #a16207)",
+    color: "#eab308",
     icon: "cap",
     image: "",
     // TODO: verify with team
@@ -74,6 +77,7 @@ export const products = [
     desc: "A platform for managing patient records, appointments, billing, and department workflows. Built for hospitals and clinics coordinating care across multiple departments.",
     url: "https://hospital-management-system.evoletrix.com",
     accent: "linear-gradient(135deg, #ef4444, #b91c1c)",
+    color: "#ef4444",
     icon: "hospital",
     image: "",
     // TODO: verify with team
@@ -93,6 +97,7 @@ export const products = [
     desc: "Custom conversational AI assistants integrated into websites or internal tools to handle support queries and guided workflows. Built for businesses that want automated, context-aware customer interaction.",
     url: "https://ai-chatbots.evoletrix.com",
     accent: "linear-gradient(135deg, #14b8a6, #0f766e)",
+    color: "#14b8a6",
     icon: "chat",
     image: "",
     // TODO: verify with team

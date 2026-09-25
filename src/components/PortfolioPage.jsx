@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import { products } from "../data/products"
 import ProductIcon from "./ProductIcon"
-import AbstractUIMockup from "./AbstractUIMockup"
+import AbstractBlueprint from "./AbstractBlueprint"
 
 // Set true to force the "Our Products" section to render locally for
 // review, even if no product has a url yet. Must be false in production.
@@ -62,10 +62,9 @@ export default function PortfolioPage() {
                     aria-selected={isSelected}
                     tabIndex={isSelected ? 0 : -1}
                     className={`product-switch-item ${isSelected ? "is-selected" : ""}`}
-                    style={{ background: prod.accent }}
                     onClick={() => setSelectedIdx(idx)}
                   >
-                    <span className="mega-menu-tile" aria-hidden="true">
+                    <span className="mega-menu-tile" style={{ background: prod.color }} aria-hidden="true">
                       <ProductIcon name={prod.icon} width={22} height={22} />
                     </span>
                     <span className="product-switch-item-text">
@@ -77,9 +76,9 @@ export default function PortfolioPage() {
               })}
             </div>
 
-            <div className="product-preview" key={selectedIdx} style={{ background: selectedProduct.accent }}>
+            <div className="product-preview" key={selectedIdx} style={{ background: `color-mix(in srgb, ${selectedProduct.color} 20%, white)` }}>
               <div className="product-preview-header">
-                <span className="product-preview-icon-tile" aria-hidden="true">
+                <span className="product-preview-icon-tile" style={{ background: selectedProduct.color }} aria-hidden="true">
                   <ProductIcon name={selectedProduct.icon} width={28} height={28} />
                 </span>
                 <div>
@@ -106,16 +105,16 @@ export default function PortfolioPage() {
                 {selectedProduct.image ? (
                   <img src={selectedProduct.image} alt={`${selectedProduct.name} screenshot`} className="browser-frame-image" />
                 ) : (
-                  <AbstractUIMockup accent={selectedProduct.accent} />
+                  <AbstractBlueprint color={selectedProduct.color} />
                 )}
               </div>
 
               {hasSelectedUrl ? (
-                <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-solid product-preview-cta">
+                <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-dark product-preview-cta">
                   Visit live ↗
                 </a>
               ) : (
-                <button className="btn btn-solid product-preview-cta" disabled>Coming soon</button>
+                <button className="btn btn-dark product-preview-cta" disabled>Coming soon</button>
               )}
             </div>
           </div>

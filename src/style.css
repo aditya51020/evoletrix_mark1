@@ -2604,30 +2604,23 @@ ul { list-style: none; padding: 0; }
   align-items: flex-start;
   gap: 14px;
   padding: 14px;
-  border-radius: 14px;
-  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: none;
   text-align: left;
   cursor: pointer;
-  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), border-color 0.15s var(--ease);
-  color: #ffffff;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--fg);
   font: inherit;
 }
 
 .product-switch-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  background: var(--panel);
 }
 
 .product-switch-item.is-selected {
-  border-color: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-}
-
-/* Scoped like .mega-menu-item .mega-menu-tile: the icon chip goes
-   translucent white since the whole card is now the product's accent
-   color (set inline), not just this tile. */
-.product-switch-item .mega-menu-tile {
-  background: rgba(255, 255, 255, 0.22);
+  background: var(--panel);
+  border-color: var(--line);
 }
 
 .product-switch-item-text {
@@ -2640,12 +2633,12 @@ ul { list-style: none; padding: 0; }
 .product-switch-item-name {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--fg);
 }
 
 .product-switch-item-tagline {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--fg-dim);
   line-height: 1.4;
 }
 
@@ -2681,14 +2674,13 @@ ul { list-style: none; padding: 0; }
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.22);
   color: #ffffff;
 }
 
 .product-preview-visual {
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   aspect-ratio: 16 / 10;
 }
 
@@ -2700,115 +2692,36 @@ ul { list-style: none; padding: 0; }
 }
 
 /* ============================================================
-   ABSTRACT UI MOCKUP — a generic, obviously-not-a-screenshot
-   dashboard skeleton, filler until a real product screenshot
-   exists. Neutral grays + the product's own accent color.
+   ABSTRACT BLUEPRINT — a generic, obviously-not-a-map/screenshot
+   line-art pattern, filler until a real product screenshot exists.
    ============================================================ */
-.ui-mockup {
+.ui-blueprint {
   width: 100%;
   height: 100%;
-  display: flex;
-  background: #fafafa;
-}
-
-.ui-mockup-sidebar {
-  width: 26%;
-  min-width: 90px;
   background: #ffffff;
-  border-right: 1px solid #e4e4e7;
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
-.ui-mockup-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  margin-bottom: 6px;
+.ui-blueprint svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-.ui-mockup-bar {
-  height: 7px;
-  border-radius: 4px;
-  background: #e4e4e7;
-}
-
-.ui-mockup-bar--accent {
-  opacity: 0.85;
-}
-
-.ui-mockup-main {
-  flex: 1;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-.ui-mockup-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ui-mockup-topbar-title {
-  width: 38%;
-  height: 10px;
-  border-radius: 4px;
-  background: #d4d4d8;
-}
-
-.ui-mockup-topbar-pill {
-  width: 56px;
-  height: 18px;
-  border-radius: 20px;
-  opacity: 0.85;
-}
-
-.ui-mockup-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.ui-mockup-card {
-  aspect-ratio: 1.3;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
-}
-
-.ui-mockup-chart {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
-}
-
-.ui-mockup-chart span {
-  flex: 1;
-  min-height: 6px;
-  border-radius: 3px 3px 0 0;
-  background: #e4e4e7;
+.ui-blueprint-road {
+  stroke: #e4e4e7;
+  stroke-width: 1;
 }
 
 .product-preview-header h3 {
   font-size: 22px;
   font-weight: 700;
-  color: #ffffff;
+  color: #18181b;
   margin: 0 0 6px;
 }
 
 .product-preview-tagline {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #44444a;
   margin: 0;
 }
 
@@ -2825,12 +2738,12 @@ ul { list-style: none; padding: 0; }
   align-items: center;
   gap: 10px;
   font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #27272a;
 }
 
 .product-preview-features li svg {
   flex-shrink: 0;
-  color: #ffffff;
+  color: var(--brand);
 }
 
 .product-preview-stack {
@@ -2840,9 +2753,9 @@ ul { list-style: none; padding: 0; }
 }
 
 .product-preview-stack .stack-chip {
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #44444a;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
 }
 
 .product-preview-cta {
@@ -2959,24 +2872,23 @@ ul { list-style: none; padding: 0; }
 .mega-menu-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px 16px;
+  gap: 4px 24px;
 }
 
 .mega-menu-item {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 16px;
-  border-radius: 14px;
+  padding: 12px;
+  border-radius: 10px;
   text-decoration: none;
-  color: #ffffff;
-  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+  color: inherit;
+  transition: background 0.15s;
 }
 
 a.mega-menu-item:hover,
 a.mega-menu-item:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  background: #f4f4f5;
 }
 
 .mega-menu-item--soon {
@@ -2986,21 +2898,12 @@ a.mega-menu-item:focus-visible {
 
 .mega-menu-tile {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   color: #ffffff;
-}
-
-/* Desktop mega-menu cards carry the product's own accent as their card
-   background now (inline style, see Header.jsx), so the icon tile switches
-   to a translucent white chip for contrast instead of repeating that same
-   color — leaving the standalone .mega-menu-tile (mobile portfolio list,
-   colored per-product) untouched. */
-.mega-menu-item .mega-menu-tile {
-  background: rgba(255, 255, 255, 0.22);
 }
 
 .mega-menu-tile--sm {
@@ -3019,20 +2922,20 @@ a.mega-menu-item:focus-visible {
 .mega-menu-item-name {
   font-size: 13.5px;
   font-weight: 600;
-  color: #ffffff;
+  color: #18181b;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .mega-menu-item-external {
-  color: rgba(255, 255, 255, 0.85);
+  color: #71717a;
   font-size: 12px;
 }
 
 .mega-menu-item-tagline {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #71717a;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -3046,8 +2949,8 @@ a.mega-menu-item:focus-visible {
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #71717a;
+  border: 1px solid #e4e4e7;
   border-radius: 10px;
   padding: 2px 7px;
   margin-top: 2px;
@@ -3070,7 +2973,7 @@ a.mega-menu-item:focus-visible {
   position: relative;
   overflow: hidden;
   height: 100%;
-  background: #ffffff;
+  background: color-mix(in srgb, var(--brand) 8%, #ffffff);
   border-radius: var(--radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   padding: 24px;
