@@ -8,6 +8,35 @@ Options -Indexes
   Header always set X-Frame-Options "DENY"
 </IfModule>
 
+# --- Caching ------------------------------------------------------------
+# Without an explicit Cache-Control, browsers fall back to heuristic
+# caching off Last-Modified — which can hold onto a stale index.html
+# after a deploy until something forces revalidation (e.g. a hard
+# refresh). index.html (and the SPA shell it falls back to) must always
+# be revalidated so a new deploy is visible on the very next load, not
+# just after a manual refresh.
+#
+# The hashed files under /assets/ are safe to cache aggressively and
+# forever: Vite gives each one a content hash in its filename, so a
+# changed file is always a new URL, never a stale cache hit.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  <FilesMatch "\.(js|css|png|jpe?g|gif|svg|webp|ico|woff2?)$">
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|png|jpe?g|gif|svg|webp|ico|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
 # Block direct access to include-only PHP files (bootstrap.inc.php etc.)
 <FilesMatch "\.inc\.php$">
   Require all denied
