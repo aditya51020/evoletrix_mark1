@@ -190,13 +190,7 @@ export default function BookingModal() {
           <button className="booking-close-mobile" onClick={closeBooking} aria-label="Close">×</button>
           
           <div className="brand" style={{ marginBottom: "24px" }}>
-            <span className="brand-mark" aria-hidden="true" style={{ color: "var(--brand-cyan)" }}>
-              <svg viewBox="0 0 24 24" width="30" height="30" fill="none">
-                <path d="M4 7 12 3l8 4v10l-8 4-8-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-                <path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-              </svg>
-            </span>
-            <span className="brand-name" style={{ color: "var(--fg)" }}>Evoletrix</span>
+            <img src="/logo-evoletrix.png" alt="Evoletrix" className="brand-logo" />
           </div>
 
           <h3 className="booking-meet-title">Product Consultation</h3>
