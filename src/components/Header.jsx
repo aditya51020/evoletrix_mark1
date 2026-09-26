@@ -81,7 +81,7 @@ export default function Header() {
   return (
     <header className={`site-header ${isStuck ? "is-stuck" : ""}`} id="siteHeader">
       <div className="shell header-inner">
-        <a href="#top" className="brand" aria-label="Evoletrix home">
+        <a href="/" className="brand" aria-label="Evoletrix home">
           <span className="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
               <path d="M4 7 12 3l8 4v10l-8 4-8-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
@@ -92,8 +92,8 @@ export default function Header() {
         </a>
 
         <nav className="primary-nav" aria-label="Primary">
-          <a href="#services-page">Services</a>
-          <a href="#industries-page">Industries</a>
+          <a href="/services">Services</a>
+          <a href="/industries">Industries</a>
 
           <div
             className="mega-menu-wrapper"
@@ -159,7 +159,7 @@ export default function Header() {
                         )
                       })}
                     </div>
-                    <a href="#portfolio-page" className="mega-menu-view-all" onClick={() => closePortfolioMenu(true)}>
+                    <a href="/portfolio" className="mega-menu-view-all" onClick={() => closePortfolioMenu(true)}>
                       View full portfolio →
                     </a>
                   </div>
@@ -184,8 +184,8 @@ export default function Header() {
             )}
           </div>
 
-          <a href="#about-page">About Us</a>
-          <a href="#careers-page">Careers</a>
+          <a href="/about">About Us</a>
+          <a href="/careers">Careers</a>
         </nav>
 
         <div className="header-cta">
@@ -204,8 +204,8 @@ export default function Header() {
       </div>
 
       <div className="mobile-menu" id="mobileMenu" style={{ display: isMenuOpen ? "flex" : "none" }}>
-        <a href="#services-page" onClick={() => setIsMenuOpen(false)}>Services</a>
-        <a href="#industries-page" onClick={() => setIsMenuOpen(false)}>Industries</a>
+        <a href="/services" onClick={() => setIsMenuOpen(false)}>Services</a>
+        <a href="/industries" onClick={() => setIsMenuOpen(false)}>Industries</a>
 
         <div className="mobile-portfolio-accordion">
           <button
@@ -242,15 +242,15 @@ export default function Header() {
                   </ItemTag>
                 )
               })}
-              <a href="#portfolio-page" className="mobile-portfolio-viewall" onClick={() => setIsMenuOpen(false)}>
+              <a href="/portfolio" className="mobile-portfolio-viewall" onClick={() => setIsMenuOpen(false)}>
                 View full portfolio →
               </a>
             </div>
           )}
         </div>
 
-        <a href="#about-page" onClick={() => setIsMenuOpen(false)}>About Us</a>
-        <a href="#careers-page" onClick={() => setIsMenuOpen(false)}>Careers</a>
+        <a href="/about" onClick={() => setIsMenuOpen(false)}>About Us</a>
+        <a href="/careers" onClick={() => setIsMenuOpen(false)}>Careers</a>
         <button className="btn btn-solid" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-booking")); }}>Get in touch</button>
       </div>
     </header>

@@ -14,31 +14,31 @@ export default function Footer() {
         </div>
         <nav className="footer-col" aria-label="Services">
           <h4>Services</h4>
-          <a href="#services-page">Web applications</a>
-          <a href="#services-page">Native iOS apps</a>
-          <a href="#services-page">AI &amp; LLM systems</a>
-          <a href="#services-page">Blockchain platforms</a>
-          <a href="#services-page">Custom ERP software</a>
+          <a href="/services">Web applications</a>
+          <a href="/services">Native iOS apps</a>
+          <a href="/services">AI &amp; LLM systems</a>
+          <a href="/services">Blockchain platforms</a>
+          <a href="/services">Custom ERP software</a>
         </nav>
         <nav className="footer-col" aria-label="Industries">
           <h4>Industries</h4>
-          <a href="#industries">Healthcare</a>
-          <a href="#industries">Education LMS</a>
-          <a href="#industries">Enterprise ERP</a>
-          <a href="#industries">Spatial &amp; GIS</a>
+          <a href="/industries">Healthcare</a>
+          <a href="/industries">Education LMS</a>
+          <a href="/industries">Enterprise ERP</a>
+          <a href="/industries">Spatial &amp; GIS</a>
         </nav>
         <nav className="footer-col" aria-label="Company">
           <h4>Company</h4>
-          <a href="#industries">Why Evoletrix</a>
-          <a href="#tech-stack">Tech stack</a>
-          <a href="#trust">Security &amp; Trust</a>
-          <a href="#faq">FAQs</a>
+          <a href="/about">Why Evoletrix</a>
+          <a href="/#tech-stack">Tech stack</a>
+          <a href="/#trust">Security &amp; Trust</a>
+          <a href="/#faq">FAQs</a>
         </nav>
         <nav className="footer-col" aria-label="Registered Office">
           <h4>Registered Office</h4>
-          <a href="#top">Faridabad</a>
-          <a href="#top">Haryana, India</a>
-          <a href="#top">Active Pvt. Ltd.</a>
+          <a href="/">Faridabad</a>
+          <a href="/">Haryana, India</a>
+          <a href="/">Active Pvt. Ltd.</a>
         </nav>
       </div>
       <div className="shell footer-bottom">
