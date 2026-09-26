@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import Wordmark from "./Wordmark"
 
 export default function BookingModal() {
   const [isOpen, setIsOpen] = useState(false)
@@ -196,7 +197,7 @@ export default function BookingModal() {
                 <path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
               </svg>
             </span>
-            <span className="brand-name" style={{ color: "var(--fg)" }}>Evoletrix</span>
+            <span style={{ color: "var(--fg)" }}><Wordmark height={22} /></span>
           </div>
 
           <h3 className="booking-meet-title">Product Consultation</h3>
