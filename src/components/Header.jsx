@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import { products } from "../data/products"
 import ProductIcon from "./ProductIcon"
-import Wordmark from "./Wordmark"
 
 const OPEN_DELAY = 100
 const CLOSE_DELAY = 200
@@ -89,7 +88,7 @@ export default function Header() {
               <path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
             </svg>
           </span>
-          <Wordmark height={20} />
+          <span className="brand-name">Evoletrix</span>
         </a>
 
         <nav className="primary-nav" aria-label="Primary">
