@@ -55,6 +55,11 @@ app.use((req, res, next) => {
   let htmlContent = fs.readFileSync(indexHtmlPath, "utf8")
 
   const seoMetadata = `
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <!-- Primary Meta Tags -->
     <title>Evoletrix | Custom Web, iOS, AI & GIS Software Engineering</title>
     <meta name="title" content="Evoletrix | Custom Web, iOS, AI & GIS Software Engineering" />
@@ -67,14 +72,16 @@ app.use((req, res, next) => {
     <meta property="og:url" content="https://www.evoletrix.com/" />
     <meta property="og:title" content="Evoletrix | Custom Web, iOS, AI & GIS Software Engineering" />
     <meta property="og:description" content="Evoletrix Private Limited designs and engineers premium custom web applications, native iOS apps, custom AI integration, blockchain platforms, ERP systems, and high-accuracy geo-referencing (GIS) software." />
-    <meta property="og:image" content="/placeholder-logo.png" />
+    <meta property="og:image" content="https://evoletrix.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://www.evoletrix.com/" />
     <meta property="twitter:title" content="Evoletrix | Custom Web, iOS, AI & GIS Software Engineering" />
     <meta property="twitter:description" content="Evoletrix Private Limited designs and engineers premium custom web applications, native iOS apps, custom AI integration, blockchain platforms, ERP systems, and high-accuracy geo-referencing (GIS) software." />
-    <meta property="twitter:image" content="/placeholder-logo.png" />
+    <meta property="twitter:image" content="https://evoletrix.com/og-image.jpg" />
 
     <!-- Google Schema Graph (JSON-LD) -->
     <script type="application/ld+json">
@@ -82,7 +89,8 @@ app.use((req, res, next) => {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "Evoletrix Private Limited",
-      "image": "/placeholder-logo.png",
+      "image": "https://evoletrix.com/logo-schema.png",
+      "logo": "https://evoletrix.com/logo-schema.png",
       "description": "Premium custom software engineering consultancy specializing in Web, iOS, AI, Blockchain, ERP, and GIS georeferencing applications.",
       "address": {
         "@type": "PostalAddress",
