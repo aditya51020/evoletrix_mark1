@@ -322,7 +322,7 @@ export default function CareersPage() {
                   </button>
                   {openFilters.location && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
-                      {["All", "Noida", "Remote"].map((loc) => (
+                      {["All", "Noida", "Faridabad", "Remote"].map((loc) => (
                         <label key={loc} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", fontSize: "13.5px", color: "#27272a" }}>
                           <input 
                             type="radio" 
