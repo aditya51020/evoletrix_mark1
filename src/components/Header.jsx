@@ -129,12 +129,15 @@ export default function Header() {
                     <div className="mega-menu-grid">
                       {products.map((prod) => {
                         const hasUrl = Boolean(prod.url && prod.url.trim())
-                        const ItemTag = hasUrl ? "a" : "div"
+                        // No live url yet: still a real link, just internal —
+                        // it lands on the portfolio page with this product
+                        // pre-selected (PortfolioPage.jsx reads the hash)
+                        // instead of going nowhere.
                         const itemProps = hasUrl
                           ? { href: prod.url, target: "_blank", rel: "noopener noreferrer", role: "menuitem" }
-                          : { role: "menuitem", "aria-disabled": true }
+                          : { href: `/portfolio#${prod.key}`, role: "menuitem", onClick: () => closePortfolioMenu(true) }
                         return (
-                          <ItemTag
+                          <a
                             key={prod.key}
                             className={`mega-menu-item ${hasUrl ? "" : "mega-menu-item--soon"}`}
                             {...itemProps}
@@ -150,7 +153,7 @@ export default function Header() {
                               <span className="mega-menu-item-tagline">{prod.tagline}</span>
                               {!hasUrl && <span className="mega-menu-item-badge">Coming soon</span>}
                             </span>
-                          </ItemTag>
+                          </a>
                         )
                       })}
                     </div>
@@ -219,12 +222,11 @@ export default function Header() {
             <div className="mobile-portfolio-list">
               {products.map((prod) => {
                 const hasUrl = Boolean(prod.url && prod.url.trim())
-                const ItemTag = hasUrl ? "a" : "div"
                 const itemProps = hasUrl
                   ? { href: prod.url, target: "_blank", rel: "noopener noreferrer", onClick: () => setIsMenuOpen(false) }
-                  : {}
+                  : { href: `/portfolio#${prod.key}`, onClick: () => setIsMenuOpen(false) }
                 return (
-                  <ItemTag
+                  <a
                     key={prod.key}
                     className={`mobile-portfolio-item ${hasUrl ? "" : "mobile-portfolio-item--soon"}`}
                     {...itemProps}
@@ -234,7 +236,7 @@ export default function Header() {
                     </span>
                     <span>{prod.name}</span>
                     {!hasUrl && <span className="mega-menu-item-badge">Coming soon</span>}
-                  </ItemTag>
+                  </a>
                 )
               })}
               <a href="/portfolio" className="mobile-portfolio-viewall" onClick={() => setIsMenuOpen(false)}>

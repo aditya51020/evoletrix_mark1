@@ -2935,8 +2935,7 @@ a.mega-menu-item:focus-visible {
 }
 
 .mega-menu-item--soon {
-  opacity: 0.55;
-  cursor: default;
+  opacity: 0.7;
 }
 
 .mega-menu-tile {

@@ -14,7 +14,14 @@ const CheckIcon = () => (
 )
 
 export default function PortfolioPage() {
-  const [selectedIdx, setSelectedIdx] = useState(0)
+  // Lands on a specific product when arriving via a link like
+  // /portfolio#compete (the header mega-menu's fallback for a product
+  // with no live url yet) — otherwise defaults to the first product.
+  const [selectedIdx, setSelectedIdx] = useState(() => {
+    const key = window.location.hash.replace("#", "")
+    const idx = products.findIndex((p) => p.key === key)
+    return idx >= 0 ? idx : 0
+  })
   const itemRefs = useRef([])
 
   // The section only makes sense once there's at least one live product to
@@ -123,7 +130,12 @@ export default function PortfolioPage() {
                   Visit live ↗
                 </a>
               ) : (
-                <button className="btn btn-solid product-preview-cta" disabled>Coming soon</button>
+                <button
+                  className="btn btn-solid product-preview-cta"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                >
+                  Book a demo
+                </button>
               )}
             </div>
           </div>

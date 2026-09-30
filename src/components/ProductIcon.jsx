@@ -17,6 +17,8 @@ export default function ProductIcon({ name, width = 20, height = 20, ...rest }) 
       return <svg {...props}><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/><path d="M12 8v8M8 12h8"/></svg>
     case "chat":
       return <svg {...props}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="15" cy="10" r="1"/></svg>
+    case "trophy":
+      return <svg {...props}><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a2 2 0 0 0 0 4h3M17 5h3a2 2 0 0 1 0 4h-3"/><path d="M12 14v4M8 21h8"/></svg>
     default:
       return <svg {...props}><circle cx="12" cy="12" r="10"/></svg>
   }

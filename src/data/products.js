@@ -11,6 +11,26 @@
 
 export const products = [
   {
+    key: "compete",
+    name: "Evoletrix Compete",
+    tagline: "Run multi-round competitions end to end, from registration to certificates.",
+    desc: "A competition management platform for case challenges, olympiads and hackathons. Students, institutes, evaluators, regional hubs and admins each get their own dashboard, and every round, score and result is tracked in one system.",
+    url: "",
+    accent: "linear-gradient(135deg, #6366f1, #4338ca)",
+    color: "#4f46e5",
+    icon: "trophy",
+    image: "/images/evoletrix-compete-dashboard.webp",
+    features: [
+      "Individual and bulk institute registration",
+      "Team formation with invite codes",
+      "Deck submissions with versioned receipts",
+      "Rubric-based jury scoring and result tabulation",
+      "Regional hubs and multi-level rounds",
+      "QR-verifiable certificates"
+    ],
+    stack: []
+  },
+  {
     key: "gis-map",
     name: "GIS Map Application",
     tagline: "Interactive mapping and geospatial analysis for your location data.",
