@@ -2604,7 +2604,7 @@ ul { list-style: none; padding: 0; }
 .product-switch-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .product-switch-item {
@@ -2612,23 +2612,31 @@ ul { list-style: none; padding: 0; }
   align-items: flex-start;
   gap: 14px;
   padding: 14px;
+  min-height: 78px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: none;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
   color: var(--fg);
   font: inherit;
 }
 
 .product-switch-item:hover {
-  background: var(--panel);
+  background: #111113;
 }
 
 .product-switch-item.is-selected {
-  background: var(--panel);
-  border-color: var(--line);
+  background: #141416;
+  border-color: #26262a;
+  /* Ring in the product's own accent, not a left-edge stripe. */
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent-color) 55%, transparent);
+}
+
+.product-switch-item:focus-visible {
+  outline: 2px solid var(--accent-color, var(--brand));
+  outline-offset: 2px;
 }
 
 .product-switch-item-text {
@@ -2651,22 +2659,34 @@ ul { list-style: none; padding: 0; }
 }
 
 .product-preview {
+  position: relative;
   border-radius: 20px;
   padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent-color) 12%, transparent) 0%, transparent 60%),
+    #141416;
+  border: 1px solid #26262a;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
-  animation: productPreviewIn 0.3s var(--ease);
+  animation: productPreviewIn 0.2s var(--ease);
 }
 
 @keyframes productPreviewIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .product-preview { animation: none; }
+}
+
+@media (min-width: 1024px) {
+  .product-preview {
+    position: sticky;
+    top: 100px;
+  }
 }
 
 .product-preview-header {
@@ -2686,16 +2706,18 @@ ul { list-style: none; padding: 0; }
 }
 
 .product-preview-visual {
-  border-radius: var(--radius);
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border: 1px solid #26262a;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   aspect-ratio: 16 / 10;
+  background: #ffffff;
 }
 
 .browser-frame-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -2723,13 +2745,13 @@ ul { list-style: none; padding: 0; }
 .product-preview-header h3 {
   font-size: 22px;
   font-weight: 700;
-  color: #18181b;
+  color: #ffffff;
   margin: 0 0 6px;
 }
 
 .product-preview-tagline {
   font-size: 14px;
-  color: #44444a;
+  color: #9b9ba3;
   margin: 0;
 }
 
@@ -2738,7 +2760,8 @@ ul { list-style: none; padding: 0; }
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 16px;
 }
 
 .product-preview-features li {
@@ -2746,12 +2769,12 @@ ul { list-style: none; padding: 0; }
   align-items: center;
   gap: 10px;
   font-size: 13.5px;
-  color: #27272a;
+  color: #d4d4d8;
 }
 
 .product-preview-features li svg {
   flex-shrink: 0;
-  color: var(--brand);
+  color: var(--accent-color, var(--brand));
 }
 
 .product-preview-stack {
@@ -2761,9 +2784,9 @@ ul { list-style: none; padding: 0; }
 }
 
 .product-preview-stack .stack-chip {
-  color: #44444a;
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
+  color: #d4d4d8;
+  background: #1c1c20;
+  border: 1px solid #26262a;
 }
 
 .product-preview-cta {
@@ -2780,10 +2803,21 @@ ul { list-style: none; padding: 0; }
   padding: 4px 10px;
 }
 
-@media (max-width: 860px) {
+/* <1024px: list stacks above the preview, but stays a normal vertical
+   list — it only collapses into horizontal chips below 640px. */
+@media (max-width: 1023px) {
   .product-switch-layout {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 640px) {
+  .product-preview-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 639px) {
   .product-switch-list {
     flex-direction: row;
     overflow-x: auto;
@@ -2797,6 +2831,7 @@ ul { list-style: none; padding: 0; }
     align-items: center;
     text-align: center;
     width: 92px;
+    min-height: auto;
     gap: 8px;
     padding: 10px 8px;
   }

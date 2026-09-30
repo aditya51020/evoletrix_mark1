@@ -19,7 +19,7 @@ export const products = [
     accent: "linear-gradient(135deg, #0ea5e9, #0369a1)",
     color: "#0ea5e9",
     icon: "map",
-    image: "",
+    image: "/images/gis-map-application.webp",
     // TODO: verify with team
     features: [
       "Custom map layers & overlays",
