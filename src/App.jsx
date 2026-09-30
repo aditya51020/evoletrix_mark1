@@ -59,11 +59,11 @@ const PAGE_META = {
   },
   about: {
     title: "About Us | Evoletrix",
-    description: "Evoletrix Private Limited is a digital engineering team based in Faridabad, India, building web, iOS, AI, and GIS software."
+    description: "Evoletrix Private Limited is a digital engineering team based in Haryana, India, building web, iOS, AI, and GIS software."
   },
   careers: {
     title: "Careers | Evoletrix",
-    description: "Explore open engineering, design, and product roles at Evoletrix in Faridabad and remote."
+    description: "Explore open engineering, design, and product roles at Evoletrix in India and remote."
   }
 }
 

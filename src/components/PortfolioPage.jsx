@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { products } from "../data/products"
 import AbstractBlueprint from "./AbstractBlueprint"
 
@@ -16,6 +16,16 @@ export default function PortfolioPage() {
     return idx >= 0 ? idx : 0
   })
   const itemRefs = useRef([])
+  const [gradNum, setGradNum] = useState(5)
+
+  // Cycle the banner gradient (5, 6, 7) every 2 seconds — same treatment
+  // as the About/Careers page hero banners.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGradNum((prev) => (prev === 7 ? 5 : prev + 1))
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   // The section only makes sense once there's at least one live product to
   // show — an all-"Coming soon" showcase isn't worth a whole page section.
@@ -43,20 +53,55 @@ export default function PortfolioPage() {
           panel (feature-layout, the same pattern WhySection uses). */}
       {showProductsSection && (
       <>
-      <section className="section portfolio-page-section" aria-labelledby="productsTitle" style={{ paddingBlock: "96px 48px" }}>
+      <section className="section portfolio-page-section" aria-labelledby="productsTitle" style={{ paddingBlock: "96px 64px" }}>
         <div className="shell">
-          <header className="ind-page-header">
+          <header className="ind-page-header" style={{ marginBottom: "56px" }}>
             <h1 id="productsTitle" className="display" style={{ marginBottom: "16px" }}>Our Products</h1>
             <p className="ind-page-sub">
               In-house software products we've built and maintain ourselves, separate from the client case studies below.
             </p>
           </header>
+
+          <div
+            data-grad={gradNum}
+            style={{
+              height: "360px",
+              border: "1px solid var(--line-soft)",
+              borderRadius: "var(--radius)",
+              position: "relative",
+              display: "flex",
+              alignItems: "flex-end",
+              padding: "40px",
+              boxShadow: "0 20px 48px rgba(0, 0, 0, 0.4)",
+              overflow: "hidden",
+              transition: "background 0.8s ease-in-out, background-image 0.8s ease-in-out"
+            }}
+            className="about-hero-banner"
+          >
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                opacity: 0.08,
+                backgroundImage: "radial-gradient(var(--fg) 1px, transparent 1px)",
+                backgroundSize: "20px 20px"
+              }}
+            ></div>
+            <div style={{ position: "relative", zIndex: 2 }}>
+              <span className="pill-tag" style={{ color: "#ffffff", borderColor: "rgba(255, 255, 255, 0.2)", marginBottom: "12px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <svg viewBox="0 0 24 24" width="6" height="6" fill="currentColor"><rect width="24" height="24"/></svg> PRODUCTS BY EVOLETRIX
+              </span>
+              <h2 style={{ color: "#ffffff", fontSize: "28px", fontWeight: "600", marginTop: "8px" }}>
+                Software We Design, Build &amp; Ship Ourselves
+              </h2>
+            </div>
+          </div>
         </div>
       </section>
 
       <div className="bg-transition-spacer" aria-hidden="true"></div>
 
-      <section className="section product-showcase theme-light-block" aria-label="Product details" style={{ paddingBlock: "0 96px" }}>
+      <section className="section product-showcase theme-light-block" aria-label="Product details" style={{ paddingBlock: "40px 96px" }}>
         <div className="shell">
           <div className="feature-layout">
             <div className="feature-tabs" role="tablist" aria-label="Our products" onKeyDown={handleListKeyDown}>

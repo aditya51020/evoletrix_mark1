@@ -31,7 +31,6 @@ export default function Footer() {
         </nav>
         <nav className="footer-col" aria-label="Registered Office">
           <h4>Registered Office</h4>
-          <a href="/">Faridabad</a>
           <a href="/">Haryana, India</a>
           <a href="/">Active Pvt. Ltd.</a>
         </nav>

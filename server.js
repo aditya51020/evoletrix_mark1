@@ -59,7 +59,7 @@ app.use((req, res, next) => {
     <title>Evoletrix | Custom Web, iOS, AI & GIS Software Engineering</title>
     <meta name="title" content="Evoletrix | Custom Web, iOS, AI & GIS Software Engineering" />
     <meta name="description" content="Evoletrix Private Limited designs and engineers premium custom web applications, native iOS apps, custom AI integration, blockchain platforms, ERP systems, and high-accuracy geo-referencing (GIS) software." />
-    <meta name="keywords" content="Evoletrix, Custom Software, Web Development, iOS Apps, AI Systems, Blockchain, ERP, Geo-referencing, GIS Mapping, Faridabad, Haryana, India" />
+    <meta name="keywords" content="Evoletrix, Custom Software, Web Development, iOS Apps, AI Systems, Blockchain, ERP, Geo-referencing, GIS Mapping, Haryana, India" />
     <meta name="author" content="Evoletrix Private Limited" />
 
     <!-- Open Graph / Facebook -->
@@ -86,7 +86,6 @@ app.use((req, res, next) => {
       "description": "Premium custom software engineering consultancy specializing in Web, iOS, AI, Blockchain, ERP, and GIS georeferencing applications.",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Faridabad",
         "addressRegion": "Haryana",
         "addressCountry": "IN"
       },

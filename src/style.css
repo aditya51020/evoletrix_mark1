@@ -2739,7 +2739,7 @@ ul { list-style: none; padding: 0; }
   /* Explicit width (not left/right: 0) both narrows the panel off the
      viewport edges and — since it's a fixed length, not 100vw — sidesteps
      the scrollbar-width overflow some browsers have with 100vw. */
-  width: min(1100px, calc(100% - 48px));
+  width: min(1320px, calc(100% - 48px));
   z-index: 99;
   background: #ffffff;
   border-radius: 20px;
@@ -2800,7 +2800,9 @@ a.mega-menu-item:focus-visible {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  color: #ffffff;
+  background: #ffffff;
+  border: 1.5px solid #18181b;
+  color: #18181b;
 }
 
 .mega-menu-tile--sm {
@@ -2862,7 +2864,8 @@ a.mega-menu-item:focus-visible {
   padding-left: 12px;
 }
 
-.mega-menu-view-all:hover {
+.mega-menu-panel .mega-menu-view-all:hover {
+  color: #18181b;
   text-decoration: underline;
 }
 
@@ -2870,7 +2873,6 @@ a.mega-menu-item:focus-visible {
   position: relative;
   overflow: hidden;
   height: 100%;
-  background: color-mix(in srgb, var(--brand) 8%, #ffffff);
   border-radius: var(--radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   padding: 24px;
@@ -2878,13 +2880,14 @@ a.mega-menu-item:focus-visible {
   flex-direction: column;
   gap: 8px;
   justify-content: center;
+  transition: background 0.8s ease-in-out, background-image 0.8s ease-in-out;
 }
 
 .mega-menu-right-pattern {
   position: absolute;
   inset: 0;
-  opacity: 0.5;
-  background-image: radial-gradient(color-mix(in srgb, var(--brand) 35%, transparent) 1.5px, transparent 1.5px);
+  opacity: 0.35;
+  background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
   background-size: 18px 18px;
   -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 0%, transparent 70%);
   mask-image: radial-gradient(circle at 100% 0%, #000 0%, transparent 70%);
@@ -2899,13 +2902,13 @@ a.mega-menu-item:focus-visible {
 .mega-menu-right h4 {
   font-size: 16px;
   font-weight: 700;
-  color: #18181b;
+  color: #ffffff;
   margin: 0;
 }
 
 .mega-menu-right p {
   font-size: 13px;
-  color: #52525b;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
   margin: 0 0 8px;
 }

@@ -10,6 +10,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isPortfolioOpen, setIsPortfolioOpen] = useState(false)
   const [isMobilePortfolioOpen, setIsMobilePortfolioOpen] = useState(false)
+  const [gradNum, setGradNum] = useState(5)
 
   const triggerRef = useRef(null)
   const panelRef = useRef(null)
@@ -23,6 +24,15 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Cycle the mega-menu CTA panel's gradient (5, 6, 7) every 2 seconds —
+  // same treatment as the About/Careers page hero banners.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGradNum((prev) => (prev === 7 ? 5 : prev + 1))
+    }, 2000)
+    return () => clearInterval(interval)
   }, [])
 
   const clearPortfolioTimers = () => {
@@ -142,7 +152,7 @@ export default function Header() {
                             className={`mega-menu-item ${hasUrl ? "" : "mega-menu-item--soon"}`}
                             {...itemProps}
                           >
-                            <span className="mega-menu-tile" style={{ background: prod.color }} aria-hidden="true">
+                            <span className="mega-menu-tile" aria-hidden="true">
                               <ProductIcon name={prod.icon} width={22} height={22} />
                             </span>
                             <span className="mega-menu-item-text">
@@ -162,7 +172,7 @@ export default function Header() {
                     </a>
                   </div>
 
-                  <div className="mega-menu-right">
+                  <div className="mega-menu-right" data-grad={gradNum}>
                     <div className="mega-menu-right-pattern" aria-hidden="true"></div>
                     <h4>Have a product idea?</h4>
                     <p>Tell us what you're building and we'll help you scope it, design it, and ship it.</p>
@@ -231,7 +241,7 @@ export default function Header() {
                     className={`mobile-portfolio-item ${hasUrl ? "" : "mobile-portfolio-item--soon"}`}
                     {...itemProps}
                   >
-                    <span className="mega-menu-tile mega-menu-tile--sm" style={{ background: prod.color }} aria-hidden="true">
+                    <span className="mega-menu-tile mega-menu-tile--sm" aria-hidden="true">
                       <ProductIcon name={prod.icon} width={16} height={16} />
                     </span>
                     <span>{prod.name}</span>

@@ -221,7 +221,7 @@ export default function CareersPage() {
                 <svg viewBox="0 0 24 24" width="6" height="6" fill="currentColor"><rect width="24" height="24"/></svg> LIFE AT EVOLETRIX
               </span>
               <h2 style={{ color: "#ffffff", fontSize: "28px", fontWeight: "600", marginTop: "8px" }}>
-                Building Digital Masterpieces from Faridabad
+                Building Digital Masterpieces from India
               </h2>
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function CareersPage() {
             <div style={{ background: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.08)", padding: "36px 28px", borderRadius: "var(--radius-sm)", boxShadow: "0 10px 30px rgba(0, 0, 0, 0.03)" }}>
               <h3 style={{ fontSize: "18px", fontWeight: "700", color: "#18181b", marginBottom: "12px" }}>Engineering Culture</h3>
               <p style={{ color: "#44444a", fontSize: "13.5px", lineHeight: "1.65" }}>
-                Enjoy a close-knit engineering culture locally in Faridabad with transparent, asynchronous Slack execution.
+                Enjoy a close-knit engineering culture with transparent, asynchronous Slack execution.
               </p>
             </div>
             <div style={{ background: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.08)", padding: "36px 28px", borderRadius: "var(--radius-sm)", boxShadow: "0 10px 30px rgba(0, 0, 0, 0.03)" }}>
@@ -322,7 +322,7 @@ export default function CareersPage() {
                   </button>
                   {openFilters.location && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
-                      {["All", "Noida", "Faridabad", "Remote"].map((loc) => (
+                      {["All", "Noida", "Remote"].map((loc) => (
                         <label key={loc} style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", fontSize: "13.5px", color: "#27272a" }}>
                           <input 
                             type="radio" 

@@ -112,7 +112,7 @@ export default function AboutPage() {
                 ◼ OUR WORKPLACE
               </span>
               <h2 style={{ color: "#ffffff", fontSize: "28px", fontWeight: "600", marginTop: "8px" }}>
-                Engineering the Future from Faridabad
+                Engineering the Future from India
               </h2>
             </div>
           </div>
@@ -133,9 +133,9 @@ export default function AboutPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }} className="stats-grid-about">
             <StatItem count={35} suffix="+" label="Industries Mastered" description="Domain sector coverage." />
-            <StatItem count={15} suffix="+" label="Global Recognitions" description="Engineering excellence awards." />
-            <StatItem count={70} suffix="+" label="Countries Powered" description="By our custom solutions." />
-            <StatItem count={5} suffix="+" label="Excellence Centers" description="Delivering core innovations." />
+            <StatItem count={100} suffix="%" label="Custom-Built Solutions" description="No templates, no shortcuts." />
+            <StatItem count={2} suffix="" label="Countries Powered" description="By our custom solutions." />
+            <StatItem count={3} suffix="+" label="Excellence Centers" description="Delivering core innovations." />
           </div>
 
           <div style={{ textAlign: "center", marginTop: "48px" }}>

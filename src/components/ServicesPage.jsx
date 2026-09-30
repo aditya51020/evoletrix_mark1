@@ -373,7 +373,7 @@ export default function ServicesPage() {
         <div className="shell" style={{ textAlign: "center" }}>
           <h2 className="display" style={{ color: "var(--light-fg)", marginBottom: "16px" }}>Ready to bring your product to life?</h2>
           <p style={{ color: "var(--fg-dim)", fontSize: "16px", maxWidth: "600px", margin: "0 auto 32px" }}>
-            Schedule a session to connect with our core squad in Faridabad or consult virtually to outline your project milestones.
+            Schedule a session to connect with our core squad or consult virtually to outline your project milestones.
           </p>
           <button 
             onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
