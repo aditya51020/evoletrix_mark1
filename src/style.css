@@ -2593,132 +2593,16 @@ ul { list-style: none; padding: 0; }
   }
 }
 
-/* Portfolio page — "Our Products" showcase (product switcher) */
-.product-switch-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 40px;
-  align-items: start;
-}
-
-.product-switch-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.product-switch-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px;
-  min-height: 78px;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
-  color: var(--fg);
-  font: inherit;
-}
-
-.product-switch-item:hover {
-  background: #111113;
-}
-
-.product-switch-item.is-selected {
-  background: #141416;
-  border-color: #26262a;
-  /* Ring in the product's own accent, not a left-edge stripe. */
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent-color) 55%, transparent);
-}
-
-.product-switch-item:focus-visible {
-  outline: 2px solid var(--accent-color, var(--brand));
-  outline-offset: 2px;
-}
-
-.product-switch-item-text {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.product-switch-item-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--fg);
-}
-
-.product-switch-item-tagline {
-  font-size: 12px;
-  color: var(--fg-dim);
-  line-height: 1.4;
-}
-
-.product-preview {
-  position: relative;
-  border-radius: 20px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background:
-    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent-color) 12%, transparent) 0%, transparent 60%),
-    #141416;
-  border: 1px solid #26262a;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
-  animation: productPreviewIn 0.2s var(--ease);
-}
-
-@keyframes productPreviewIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .product-preview { animation: none; }
-}
-
-@media (min-width: 1024px) {
-  .product-preview {
-    position: sticky;
-    top: 100px;
-  }
-}
-
-.product-preview-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.product-preview-icon-tile {
-  flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-}
-
-.product-preview-visual {
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid #26262a;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  aspect-ratio: 16 / 10;
-  background: #ffffff;
-}
-
-.browser-frame-image {
+/* Portfolio page — "Our Products" showcase. Reuses the same
+   feature-layout/feature-tabs/feature-panel pattern as WhySection, just
+   with product-specific content (screenshot/blueprint + CTA) slotted in. */
+.feature-visual-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
+  border-radius: 8px;
+  background: #ffffff;
 }
 
 /* ============================================================
@@ -2742,55 +2626,15 @@ ul { list-style: none; padding: 0; }
   stroke-width: 1;
 }
 
-.product-preview-header h3 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 6px;
-}
-
-.product-preview-tagline {
-  font-size: 14px;
-  color: #9b9ba3;
-  margin: 0;
-}
-
-.product-preview-features {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 16px;
-}
-
-.product-preview-features li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13.5px;
-  color: #d4d4d8;
-}
-
-.product-preview-features li svg {
-  flex-shrink: 0;
-  color: var(--accent-color, var(--brand));
+.product-showcase-cta {
+  margin-top: 24px;
+  align-self: flex-start;
 }
 
 .product-preview-stack {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.product-preview-stack .stack-chip {
-  color: #d4d4d8;
-  background: #1c1c20;
-  border: 1px solid #26262a;
-}
-
-.product-preview-cta {
-  align-self: flex-start;
 }
 
 .stack-chip {
@@ -2803,41 +2647,52 @@ ul { list-style: none; padding: 0; }
   padding: 4px 10px;
 }
 
-/* <1024px: list stacks above the preview, but stays a normal vertical
-   list — it only collapses into horizontal chips below 640px. */
-@media (max-width: 1023px) {
-  .product-switch-layout {
-    grid-template-columns: 1fr;
-  }
+/* ============================================================
+   LIGHT PRODUCT SHOWCASE OVERRIDES
+   ============================================================ */
+.product-showcase.theme-light-block {
+  background: var(--light-bg);
+  color: var(--light-fg);
 }
 
-@media (max-width: 640px) {
-  .product-preview-features {
-    grid-template-columns: 1fr;
-  }
+.product-showcase.theme-light-block .feature-tab {
+  color: var(--fg-dim);
 }
 
-@media (max-width: 639px) {
-  .product-switch-list {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .product-switch-item {
-    flex: 0 0 auto;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 92px;
-    min-height: auto;
-    gap: 8px;
-    padding: 10px 8px;
-  }
-  .product-switch-item-tagline {
-    display: none;
-  }
+.product-showcase.theme-light-block .feature-tab.is-active {
+  color: var(--light-fg);
+  background: var(--light-panel);
+  border-color: var(--light-line);
+}
+
+.product-showcase.theme-light-block .feature-tab.is-active .ft-num {
+  color: var(--brand);
+}
+
+.product-showcase.theme-light-block .feature-panels {
+  border-color: var(--light-line);
+  background: var(--light-panel);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+}
+
+.product-showcase.theme-light-block .feature-visual {
+  border-right-color: var(--light-line);
+  background: #f7f7f5;
+}
+
+.product-showcase.theme-light-block .feature-copy {
+  color: var(--light-fg);
+}
+
+.product-showcase.theme-light-block .feature-copy p,
+.product-showcase.theme-light-block .ticks li {
+  color: #44444a;
+}
+
+.product-showcase.theme-light-block .stack-chip {
+  color: #44444a;
+  background: #ffffff;
+  border: 1px solid var(--light-line);
 }
 
 /* ===========================================================

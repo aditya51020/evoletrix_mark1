@@ -1,17 +1,10 @@
 import React, { useState, useRef } from "react"
 import { products } from "../data/products"
-import ProductIcon from "./ProductIcon"
 import AbstractBlueprint from "./AbstractBlueprint"
 
 // Set true to force the "Our Products" section to render locally for
 // review, even if no product has a url yet. Must be false in production.
 const PREVIEW_ALL = false
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-)
 
 export default function PortfolioPage() {
   // Lands on a specific product when arriving via a link like
@@ -45,19 +38,28 @@ export default function PortfolioPage() {
 
   return (
     <>
-      {/* OUR PRODUCTS */}
+      {/* OUR PRODUCTS — dark title strip keeps the transparent header
+          legible at scroll-top, then the switcher itself is a light
+          panel (feature-layout, the same pattern WhySection uses). */}
       {showProductsSection && (
-      <section className="section portfolio-page-section" aria-labelledby="productsTitle" style={{ paddingBlock: "96px 64px" }}>
+      <>
+      <section className="section portfolio-page-section" aria-labelledby="productsTitle" style={{ paddingBlock: "96px 48px" }}>
         <div className="shell">
-          <header className="ind-page-header" style={{ marginBottom: "56px" }}>
-            <h2 id="productsTitle" className="display" style={{ marginBottom: "16px" }}>Our Products</h2>
+          <header className="ind-page-header">
+            <h1 id="productsTitle" className="display" style={{ marginBottom: "16px" }}>Our Products</h1>
             <p className="ind-page-sub">
               In-house software products we've built and maintain ourselves, separate from the client case studies below.
             </p>
           </header>
+        </div>
+      </section>
 
-          <div className="product-switch-layout">
-            <div className="product-switch-list" role="listbox" aria-label="Our products" onKeyDown={handleListKeyDown}>
+      <div className="bg-transition-spacer" aria-hidden="true"></div>
+
+      <section className="section product-showcase theme-light-block" aria-label="Product details" style={{ paddingBlock: "0 96px" }}>
+        <div className="shell">
+          <div className="feature-layout">
+            <div className="feature-tabs" role="tablist" aria-label="Our products" onKeyDown={handleListKeyDown}>
               {products.map((prod, idx) => {
                 const isSelected = idx === selectedIdx
                 return (
@@ -65,86 +67,71 @@ export default function PortfolioPage() {
                     key={prod.key}
                     ref={(el) => { itemRefs.current[idx] = el }}
                     type="button"
-                    role="option"
+                    role="tab"
                     aria-selected={isSelected}
                     tabIndex={isSelected ? 0 : -1}
-                    className={`product-switch-item ${isSelected ? "is-selected" : ""}`}
-                    style={{ "--accent-color": prod.color }}
+                    className={`feature-tab ${isSelected ? "is-active" : ""}`}
                     onClick={() => setSelectedIdx(idx)}
                   >
-                    <span className="mega-menu-tile" style={{ background: prod.color }} aria-hidden="true">
-                      <ProductIcon name={prod.icon} width={22} height={22} />
-                    </span>
-                    <span className="product-switch-item-text">
-                      <span className="product-switch-item-name">{prod.name}</span>
-                      <span className="product-switch-item-tagline">{prod.tagline}</span>
-                    </span>
+                    <span className="ft-num">{String(idx + 1).padStart(2, "0")}</span> {prod.name}
                   </button>
                 )
               })}
             </div>
 
-            <div className="product-preview" key={selectedIdx} style={{ "--accent-color": selectedProduct.color }}>
-              <div className="product-preview-header">
-                <span className="product-preview-icon-tile" style={{ background: selectedProduct.color }} aria-hidden="true">
-                  <ProductIcon name={selectedProduct.icon} width={28} height={28} />
-                </span>
-                <div>
+            <div className="feature-panels">
+              <article className="feature-panel is-active" key={selectedIdx}>
+                <div className="feature-visual">
+                  {selectedProduct.image ? (
+                    <img
+                      src={selectedProduct.image}
+                      alt={`${selectedProduct.name} screenshot`}
+                      className="feature-visual-image"
+                      loading="lazy"
+                      decoding="async"
+                      width="2400"
+                      height="1500"
+                    />
+                  ) : (
+                    <AbstractBlueprint color={selectedProduct.color} />
+                  )}
+                </div>
+                <div className="feature-copy">
+                  <span className="ft-index">{String(selectedIdx + 1).padStart(2, "0")}</span>
                   <h3>{selectedProduct.name}</h3>
-                  <p className="product-preview-tagline">{selectedProduct.tagline}</p>
+                  <p>{selectedProduct.desc || selectedProduct.tagline}</p>
+                  <ul className="ticks">
+                    {selectedProduct.features.map((f, i) => (
+                      <li key={i}>{f}</li>
+                    ))}
+                  </ul>
+                  {selectedProduct.stack.length > 0 && (
+                    <div className="product-preview-stack" style={{ marginTop: "16px" }}>
+                      {selectedProduct.stack.map((s, i) => (
+                        <span key={i} className="stack-chip">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                  {hasSelectedUrl ? (
+                    <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-dark product-showcase-cta">
+                      Visit live ↗
+                    </a>
+                  ) : (
+                    <button
+                      className="btn btn-dark product-showcase-cta"
+                      onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
+                    >
+                      Book a demo
+                    </button>
+                  )}
                 </div>
-              </div>
-
-              <ul className="product-preview-features">
-                {selectedProduct.features.map((f, i) => (
-                  <li key={i}><CheckIcon /> {f}</li>
-                ))}
-              </ul>
-
-              {selectedProduct.stack.length > 0 && (
-                <div className="product-preview-stack">
-                  {selectedProduct.stack.map((s, i) => (
-                    <span key={i} className="stack-chip">{s}</span>
-                  ))}
-                </div>
-              )}
-
-              <div className="product-preview-visual">
-                {selectedProduct.image ? (
-                  <img
-                    src={selectedProduct.image}
-                    alt={`${selectedProduct.name} screenshot`}
-                    className="browser-frame-image"
-                    loading="lazy"
-                    decoding="async"
-                    width="2400"
-                    height="1500"
-                  />
-                ) : (
-                  <AbstractBlueprint color={selectedProduct.color} />
-                )}
-              </div>
-
-              {hasSelectedUrl ? (
-                <a href={selectedProduct.url} target="_blank" rel="noopener noreferrer" className="btn btn-solid product-preview-cta">
-                  Visit live ↗
-                </a>
-              ) : (
-                <button
-                  className="btn btn-solid product-preview-cta"
-                  onClick={() => window.dispatchEvent(new CustomEvent("open-booking"))}
-                >
-                  Book a demo
-                </button>
-              )}
+              </article>
             </div>
           </div>
         </div>
       </section>
+      </>
       )}
-
-      {/* Spacer transition: Dark to Light (Black to White) */}
-      <div className="bg-transition-spacer" aria-hidden="true"></div>
 
       {/* Light CTA Section */}
       <section className="section outcomes theme-light-block" style={{ paddingBlock: "96px" }}>
