@@ -82,7 +82,8 @@ export default function Header() {
     <header className={`site-header ${isStuck ? "is-stuck" : ""}`} id="siteHeader">
       <div className="shell header-inner">
         <a href="/" className="brand" aria-label="Evoletrix home">
-          <img src="/logo-evoletrix.png" alt="Evoletrix" className="brand-logo" />
+          <img src="/logo-evoletrix-white.png" alt="Evoletrix" className="brand-logo brand-logo--full" />
+          <img src="/logo-icon-white.png" alt="Evoletrix" className="brand-logo brand-logo--icon" />
         </a>
 
         <nav className="primary-nav" aria-label="Primary">

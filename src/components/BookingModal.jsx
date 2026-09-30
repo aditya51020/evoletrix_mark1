@@ -190,7 +190,7 @@ export default function BookingModal() {
           <button className="booking-close-mobile" onClick={closeBooking} aria-label="Close">×</button>
           
           <div className="brand" style={{ marginBottom: "24px" }}>
-            <img src="/logo-evoletrix.png" alt="Evoletrix" className="brand-logo" />
+            <img src="/logo-evoletrix-white.png" alt="Evoletrix" className="brand-logo" />
           </div>
 
           <h3 className="booking-meet-title">Product Consultation</h3>

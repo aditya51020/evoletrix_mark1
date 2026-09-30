@@ -5,12 +5,7 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="shell footer-grid">
         <div className="footer-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="30" height="30" fill="none">
-              <path d="M4 7 12 3l8 4v10l-8 4-8-4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-              <path d="M4 7l8 4 8-4M12 11v10" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-            </svg>
-          </span>
+          <img src="/logo-icon-white.png" alt="Evoletrix" className="footer-brand-icon" />
         </div>
         <nav className="footer-col" aria-label="Services">
           <h4>Services</h4>

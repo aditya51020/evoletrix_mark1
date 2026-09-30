@@ -219,6 +219,11 @@ ul { list-style: none; padding: 0; }
 }
 .brand-mark { color: var(--fg); display: inline-flex; }
 .brand-logo { height: 30px; width: auto; display: block; }
+/* Full wordmark on desktop, icon-only on mobile (<=860px) — see the
+   media query alongside the rest of the header's mobile breakpoint. */
+.brand-logo--full { display: block; }
+.brand-logo--icon { display: none; height: 26px; }
+.footer-brand-icon { height: 26px; width: auto; display: block; opacity: 0.7; }
 .primary-nav {
   display: flex;
   gap: 30px;
@@ -1347,6 +1352,8 @@ ul { list-style: none; padding: 0; }
   .primary-nav, .header-cta { display: none; }
   .nav-toggle { display: flex; }
   .mobile-menu:not([hidden]) { display: flex; }
+  .brand-logo--full { display: none; }
+  .brand-logo--icon { display: block; }
   .section { padding-block: 68px; }
   .feature-layout { grid-template-columns: 1fr; }
   .feature-tabs { position: static; grid-auto-flow: column; overflow-x: auto; }
