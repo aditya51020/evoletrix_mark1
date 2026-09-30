@@ -59,7 +59,7 @@ export const products = [
     accent: "linear-gradient(135deg, #64748b, #334155)",
     color: "#64748b",
     icon: "folder",
-    image: "",
+    image: "/images/record-management-dashboard.webp",
     // TODO: verify with team
     features: [
       "Role-based access control",
@@ -79,7 +79,7 @@ export const products = [
     accent: "linear-gradient(135deg, #eab308, #a16207)",
     color: "#eab308",
     icon: "cap",
-    image: "",
+    image: "/images/university-management-dashboard.webp",
     // TODO: verify with team
     features: [
       "Admissions & enrollment tracking",
@@ -99,7 +99,7 @@ export const products = [
     accent: "linear-gradient(135deg, #ef4444, #b91c1c)",
     color: "#ef4444",
     icon: "hospital",
-    image: "",
+    image: "/images/hospital-management-dashboard.webp",
     // TODO: verify with team
     features: [
       "Patient record management",
@@ -119,7 +119,7 @@ export const products = [
     accent: "linear-gradient(135deg, #14b8a6, #0f766e)",
     color: "#14b8a6",
     icon: "chat",
-    image: "",
+    image: "/images/ai-chatbots-dashboard.webp",
     // TODO: verify with team
     features: [
       "Custom conversation flows",
