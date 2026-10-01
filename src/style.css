@@ -949,7 +949,10 @@ ul { list-style: none; padding: 0; }
 }
 .visual-terminal .vt-head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  row-gap: 2px;
+  column-gap: 8px;
   color: var(--fg-muted);
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -3085,7 +3088,8 @@ a.mega-menu-item:focus-visible {
 .services-carousel-card .feature-visual {
   border-right: none;
   border-bottom: 1px solid var(--light-line);
-  min-height: 180px;
+  height: 180px;
+  overflow: hidden;
 }
 
 .services-carousel-dots {
